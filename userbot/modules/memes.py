@@ -4,19 +4,20 @@
 # you may not use this file except in compliance with the License.
 #
 #
-""" Userbot module for having some fun. """
+# Userbot module for having some fun.
 
-import asyncio
-import random
-import re
-import time
-
+import asyncio, re, time
 from cowpy import cow
-
+from random import randint, choice, getrandbits
 from userbot import CMD_HELP, ZALG_LIST, CMDPREFIX
 from userbot.events import register, errors_handler
 
+
+#
 # ================= CONSTANT =================
+#
+
+
 METOOSTR = [
     "Me too thanks","Haha yes, me too","Same lol","Me irl",
     "Haha same","Same here","Haha yes","Yeah, same bro","Me rn",
@@ -76,14 +77,16 @@ RUNSREACTS = [
     "I am just walking off, coz me is too fat.",
     "I Fugged off!",
 ]
-DISABLE_RUN = False
 
+
+#
 # ===========================================
+#
+
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}(\w+)say (.*)")
 @errors_handler
-async def univsaye(cowmsg):
-    """ For .cowsay module, userbot wrapper for cow which says things. """
+async def univsaye(cowmsg): # For .cowsay module, userbot wrapper for cow which says things.
     arg = cowmsg.pattern_match.group(1).lower()
     text = cowmsg.pattern_match.group(2)
 
@@ -99,8 +102,7 @@ async def univsaye(cowmsg):
 
 @register(outgoing=True, pattern="^:/$")
 @errors_handler
-async def kek(keks):
-    """ Check yourself ;)"""
+async def kek(keks): # Check yourself ;)
     uio = ["/", "\\"]
     for i in range(1, 15):
         time.sleep(0.3)
@@ -109,8 +111,7 @@ async def kek(keks):
 
 @register(outgoing=True, pattern="^-_-$")
 @errors_handler
-async def lol(lel):
-    """ Ok... """
+async def lol(lel): # Ok...
     okay = "-_-"
     for _ in range(10):
         okay = okay[:-1] + "_-"
@@ -119,8 +120,7 @@ async def lol(lel):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}cp(?: |$)(.*)")
 @errors_handler
-async def copypasta(cp_e):
-    """ Copypasta the famous meme """
+async def copypasta(cp_e): # Copypasta the famous meme
     textx = await cp_e.get_reply_message()
     message = cp_e.pattern_match.group(1)
 
@@ -132,30 +132,29 @@ async def copypasta(cp_e):
         await cp_e.edit("`😂🅱️IvE👐sOME👅text👅 for✌️Me👌tO👐MAkE👀iT💞funNy!💦`")
         return
 
-    reply_text = random.choice(EMOJIS)
+    reply_text = choice(EMOJIS)
     # choose a random character in the message to be substituted with 🅱️
-    b_char = random.choice(message).lower()
+    b_char = choice(message).lower()
     for owo in message:
         if owo == " ":
-            reply_text += random.choice(EMOJIS)
+            reply_text += choice(EMOJIS)
         elif owo in EMOJIS:
             reply_text += owo
-            reply_text += random.choice(EMOJIS)
+            reply_text += choice(EMOJIS)
         elif owo.lower() == b_char:
             reply_text += "🅱️"
         else:
-            if bool(random.getrandbits(1)):
+            if bool(getrandbits(1)):
                 reply_text += owo.upper()
             else:
                 reply_text += owo.lower()
-    reply_text += random.choice(EMOJIS)
+    reply_text += choice(EMOJIS)
     await cp_e.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}vapor(?: |$)(.*)")
 @errors_handler
-async def vapor(vpr):
-    """ Vaporize everything! """
+async def vapor(vpr): # Vaporize everything!
     reply_text = list()
     textx = await vpr.get_reply_message()
     message = vpr.pattern_match.group(1)
@@ -180,8 +179,7 @@ async def vapor(vpr):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}str(?: |$)(.*)")
 @errors_handler
-async def stretch(stret):
-    """ Stretch it."""
+async def stretch(stret): # Stretch it.
     textx = await stret.get_reply_message()
     message = stret.text
     message = stret.pattern_match.group(1)
@@ -193,16 +191,14 @@ async def stretch(stret):
         await stret.edit("`GiiiiiiiB sooooooomeeeeeee teeeeeeext!`")
         return
 
-    count = random.randint(3, 10)
     reply_text = re.sub(r"([aeiouAEIOUａｅｉｏｕＡＥＩＯＵаеиоуюяыэё])",
-                        (r"\1" * count), message)
+                        (r"\1" * randint(3, 10)), message)
     await stret.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}zal(?: |$)(.*)")
 @errors_handler
-async def zal(zgfy):
-    """ Invoke the feeling of chaos. """
+async def zal(zgfy): # Invoke the feeling of chaos.
     reply_text = list()
     textx = await zgfy.get_reply_message()
     message = zgfy.pattern_match.group(1)
@@ -222,17 +218,8 @@ async def zal(zgfy):
             continue
 
         for _ in range(0, 3):
-            randint = random.randint(0, 2)
-
-            if randint == 0:
-                charac = charac.strip() + \
-                    random.choice(ZALG_LIST[0]).strip()
-            elif randint == 1:
-                charac = charac.strip() + \
-                    random.choice(ZALG_LIST[1]).strip()
-            else:
-                charac = charac.strip() + \
-                    random.choice(ZALG_LIST[2]).strip()
+            charac = charac.strip() + \
+                choice(ZALG_LIST[randint(0,2)]).strip()
 
         reply_text.append(charac)
 
@@ -241,15 +228,13 @@ async def zal(zgfy):
 
 @register(outgoing=True, pattern="^hi$")
 @errors_handler
-async def hoi(hello):
-    """ Greet everyone! """
+async def hoi(hello): # Greet everyone!
     await hello.edit("Hoi!😄")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}owo(?: |$)(.*)")
 @errors_handler
-async def faces(owo):
-    """ UwU """
+async def faces(owo): # UwU
     textx = await owo.get_reply_message()
     message = owo.pattern_match.group(1)
     if message:
@@ -264,65 +249,41 @@ async def faces(owo):
     reply_text = re.sub(r"(R|L)", "W", reply_text)
     reply_text = re.sub(r"n([aeiou])", r"ny\1", reply_text)
     reply_text = re.sub(r"N([aeiouAEIOU])", r"Ny\1", reply_text)
-    reply_text = re.sub(r"\!+", " " + random.choice(UWUS), reply_text)
+    reply_text = re.sub(r"\!+", " " + choice(UWUS), reply_text)
     reply_text = reply_text.replace("ove", "uv")
-    reply_text += " " + random.choice(UWUS)
+    reply_text += " " + choice(UWUS)
     await owo.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}react$")
 @errors_handler
-async def react_meme(react):
-    """ Make your userbot react to everything. """
-    await react.edit(random.choice(FACEREACTS))
+async def react_meme(react): # Make your userbot react to everything.
+    await react.edit(choice(FACEREACTS))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}shg$")
 @errors_handler
-async def shrugger(shg):
-    r""" ¯\_(ツ)_/¯ """
+async def shrugger(shg): # ¯\_(ツ)_/¯
     await shg.edit(r"¯\_(ツ)_/¯")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}runs$")
 @errors_handler
-async def runner_lol(run):
-    """ Run, run, RUNNN! """
-    if not DISABLE_RUN:
-        index = random.randint(0, len(RUNSREACTS) - 1)
-        reply_text = RUNSREACTS[index]
-        await run.edit(reply_text)
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}disable runs$")
-@errors_handler
-async def disable_runs(norun):
-    """ Some people don't like running... """
-    global DISABLE_RUN
-    DISABLE_RUN = True
-    await norun.edit("```Done!```")
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}enable runs$")
-@errors_handler
-async def enable_runs(run):
-    """ But some do! """
-    global DISABLE_RUN
-    DISABLE_RUN = False
-    await run.edit("```Done!```")
+async def runner_lol(run): # Run, run, RUNNN!
+    index = randint(0, len(RUNSREACTS) - 1)
+    reply_text = RUNSREACTS[index]
+    await run.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}metoo$")
 @errors_handler
-async def metoo(hahayes):
-    """ Haha yes """
-    await hahayes.edit(random.choice(METOOSTR))
+async def metoo(hahayes): # Haha yes
+    await hahayes.edit(choice(METOOSTR))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}mock(?: |$)(.*)")
 @errors_handler
-async def spongemocktext(mock):
-    """ Do it and find the real fun. """
+async def spongemocktext(mock): # Do it and find the real fun.
     reply_text = list()
     textx = await mock.get_reply_message()
     message = mock.pattern_match.group(1)
@@ -335,7 +296,7 @@ async def spongemocktext(mock):
         return
 
     for charac in message:
-        if charac.isalpha() and random.randint(0, 1):
+        if charac.isalpha() and randint(0, 1):
             to_app = charac.upper() if charac.islower() else charac.lower()
             reply_text.append(to_app)
         else:
@@ -346,8 +307,7 @@ async def spongemocktext(mock):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}clap(?: |$)(.*)")
 @errors_handler
-async def claptext(memereview):
-    """ Praise people! """
+async def claptext(memereview): # Praise people!
     textx = await memereview.get_reply_message()
     message = memereview.pattern_match.group(1)
     if message:
@@ -365,8 +325,7 @@ async def claptext(memereview):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}bt$")
 @errors_handler
-async def bluetext(bt_e):
-    """ Believe me, you will find this useful. """
+async def bluetext(bt_e): # Believe me, you will find this useful.
     if await bt_e.get_reply_message():
         await bt_e.edit(
             "`BLUETEXT MUST CLICK.`\n"
@@ -375,8 +334,7 @@ async def bluetext(bt_e):
 
 @register(pattern=f'{CMDPREFIX}type(?: |$)(.*)')
 @errors_handler
-async def typewriter(typew):
-    """ Just a small command to make your keyboard become a typewriter! """
+async def typewriter(typew): # Just a small command to make your keyboard become a typewriter!
     textx = await typew.get_reply_message()
     message = typew.pattern_match.group(1)
     if message:
