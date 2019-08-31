@@ -11,7 +11,7 @@ from sys import argv
 
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 
-from userbot import BRAIN_CHECKER, LOGS, bot
+from userbot import BRAIN_CHECKER, LOGS, bot, CMDPREFIX
 from userbot.modules import ALL_MODULES
 
 DB = connect("learning-data-root.check")
@@ -34,7 +34,7 @@ except PhoneNumberInvalidError:
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)
 
-LOGS.info("Your Bot is alive! Test it by typing .alive on any chat."
+LOGS.info(f"Your Bot is alive! Test it by typing {CMDPREFIX}alive on any chat."
           " Should you need assistance, head to https://t.me/userbot_support")
 LOGS.info("Your Bot Version is 4.0")
 

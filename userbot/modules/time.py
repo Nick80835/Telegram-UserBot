@@ -12,7 +12,7 @@ from pytz import country_names as c_n
 from pytz import country_timezones as c_tz
 from pytz import timezone as tz
 
-from userbot import CMD_HELP
+from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 # ===== CONSTANT =====
@@ -47,7 +47,7 @@ async def get_tz(con):
         return
 
 
-@register(outgoing=True, pattern="^.time(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}time(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
 @errors_handler
 async def time_func(tdata):
     """ For .time command, return the time of
@@ -55,59 +55,57 @@ async def time_func(tdata):
         2. The default userbot country(set it by using .settime),
         3. The server where the userbot runs.
     """
-    if not tdata.text[0].isalpha() and tdata.text[0] not in ("/", "#", "@",
-                                                             "!"):
-        con = tdata.pattern_match.group(1).title()
-        tz_num = tdata.pattern_match.group(2)
+    con = tdata.pattern_match.group(1).title()
+    tz_num = tdata.pattern_match.group(2)
 
-        t_form = "%H:%M"
+    t_form = "%H:%M"
 
-        if con:
-            try:
-                c_name = c_n[con]
-            except KeyError:
-                c_name = con
+    if con:
+        try:
+            c_name = c_n[con]
+        except KeyError:
+            c_name = con
 
-            timezones = await get_tz(con)
-        else:
-            await tdata.edit(
-                f"`It's`  **{dt.now().strftime(t_form)}**  `here.`")
-            return
-
-        if not timezones:
-            await tdata.edit(INV_CON)
-            return
-
-        if len(timezones) == 1:
-            time_zone = timezones[0]
-        elif len(timezones) > 1:
-            if tz_num:
-                tz_num = int(tz_num)
-                if len(timezones) >= tz_num:
-                    time_zone = timezones[tz_num - 1]
-                else:
-                    await tdata.edit(TZ_NOT_FOUND)
-                    return
-            else:
-                return_str = f"{c_name} has multiple timezones:\n"
-
-                for i, item in enumerate(timezones):
-                    return_str += f"{i+1}. {item}\n"
-
-                return_str += "Choose one by typing the number "
-                return_str += "in the command. Example:\n"
-                return_str += f".time {c_name} 2"
-
-                await tdata.edit(return_str)
-                return
-
-        dtnow = dt.now(tz(time_zone)).strftime(t_form)
-
+        timezones = await get_tz(con)
+    else:
         await tdata.edit(
-            f"`It's`  **{dtnow}**  `in {c_name}({time_zone} timezone).`")
+            f"`It's`  **{dt.now().strftime(t_form)}**  `here.`")
+        return
+
+    if not timezones:
+        await tdata.edit(INV_CON)
+        return
+
+    if len(timezones) == 1:
+        time_zone = timezones[0]
+    elif len(timezones) > 1:
+        if tz_num:
+            tz_num = int(tz_num)
+            if len(timezones) >= tz_num:
+                time_zone = timezones[tz_num - 1]
+            else:
+                await tdata.edit(TZ_NOT_FOUND)
+                return
+        else:
+            return_str = f"{c_name} has multiple timezones:\n"
+
+            for i, item in enumerate(timezones):
+                return_str += f"{i+1}. {item}\n"
+
+            return_str += "Choose one by typing the number "
+            return_str += "in the command. Example:\n"
+            return_str += f".time {c_name} 2"
+
+            await tdata.edit(return_str)
+            return
+
+    dtnow = dt.now(tz(time_zone)).strftime(t_form)
+
+    await tdata.edit(
+        f"`It's`  **{dtnow}**  `in {c_name}({time_zone} timezone).`")
 
 
-@register(outgoing=True, pattern="^.date(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}date(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
 @errors_handler
 async def date_func(dat):
     """ For .date command, return the date of
@@ -115,54 +113,53 @@ async def date_func(dat):
         2. The default userbot country(set it by using .settime),
         3. The server where the userbot runs.
     """
-    if not dat.text[0].isalpha() and dat.text[0] not in ("/", "#", "@", "!"):
-        con = dat.pattern_match.group(1).title()
-        tz_num = dat.pattern_match.group(2)
+    con = dat.pattern_match.group(1).title()
+    tz_num = dat.pattern_match.group(2)
 
-        d_form = "%d/%m/%y - %A"
+    d_form = "%d/%m/%y - %A"
 
-        if con:
-            try:
-                c_name = c_n[con]
-            except KeyError:
-                c_name = con
+    if con:
+        try:
+            c_name = c_n[con]
+        except KeyError:
+            c_name = con
 
-            timezones = await get_tz(con)
-        else:
-            await dat.edit(f"`It's`  **{dt.now().strftime(d_form)}**  `here.`")
-            return
+        timezones = await get_tz(con)
+    else:
+        await dat.edit(f"`It's`  **{dt.now().strftime(d_form)}**  `here.`")
+        return
 
-        if not timezones:
-            await dat.edit(INV_CON)
-            return
+    if not timezones:
+        await dat.edit(INV_CON)
+        return
 
-        if len(timezones) == 1:
-            time_zone = timezones[0]
-        elif len(timezones) > 1:
-            if tz_num:
-                tz_num = int(tz_num)
-                if len(timezones) >= tz_num:
-                    time_zone = timezones[tz_num - 1]
-                else:
-                    await dat.edit(TZ_NOT_FOUND)
-                    return
+    if len(timezones) == 1:
+        time_zone = timezones[0]
+    elif len(timezones) > 1:
+        if tz_num:
+            tz_num = int(tz_num)
+            if len(timezones) >= tz_num:
+                time_zone = timezones[tz_num - 1]
             else:
-                return_str = f"{c_name} has multiple timezones:\n"
-
-                for i, item in enumerate(timezones):
-                    return_str += f"{i+1}. {item}\n"
-
-                return_str += "Choose one by typing the number "
-                return_str += "in the command. Example:\n"
-                return_str += f".date {c_name} 2"
-
-                await dat.edit(return_str)
+                await dat.edit(TZ_NOT_FOUND)
                 return
+        else:
+            return_str = f"{c_name} has multiple timezones:\n"
 
-        dtnow = dt.now(tz(time_zone)).strftime(d_form)
+            for i, item in enumerate(timezones):
+                return_str += f"{i+1}. {item}\n"
 
-        await dat.edit(
-            f"`It's`  **{dtnow}**  `in {c_name}({time_zone} timezone).`")
+            return_str += "Choose one by typing the number "
+            return_str += "in the command. Example:\n"
+            return_str += f".date {c_name} 2"
+
+            await dat.edit(return_str)
+            return
+
+    dtnow = dt.now(tz(time_zone)).strftime(d_form)
+
+    await dat.edit(
+        f"`It's`  **{dtnow}**  `in {c_name}({time_zone} timezone).`")
 
 
 CMD_HELP.update({

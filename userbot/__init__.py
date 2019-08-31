@@ -17,13 +17,16 @@ from telethon import TelegramClient
 
 load_dotenv("config.env")
 
+# Command prefix
+CMDPREFIX = os.environ.get("CMDPREFIX", ".")
+
 # Bot Logs setup:
 CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
 if CONSOLE_LOGGER_VERBOSE:
     basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=DEBUG,
+        level=DEBUG
     )
 else:
     basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -45,11 +48,9 @@ if CONFIG_CHECK:
     quit(1)
 
 API_KEY = os.environ.get("API_KEY", None)
-
 API_HASH = os.environ.get("API_HASH", None)
 
 BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID", "0"))
-
 BOTLOG = sb(os.environ.get("BOTLOG", "False"))
 
 PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))

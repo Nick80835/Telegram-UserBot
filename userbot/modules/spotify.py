@@ -10,7 +10,7 @@ from telethon.errors import AboutTooLongError
 from telethon.tl.functions.account import UpdateProfileRequest
 
 from userbot import (DEFAULT_BIO, CMD_HELP, BOTLOG, BOTLOG_CHATID, BIO_PREFIX,
-                     SPOTIFY_PASS, SPOTIFY_USERNAME, bot)
+                     SPOTIFY_PASS, SPOTIFY_USERNAME, bot, CMDPREFIX)
 from userbot.events import register, errors_handler
 
 # =================== CONSTANT ===================
@@ -109,7 +109,7 @@ async def dirtyfix():
     await update_spotify_info()
 
 
-@register(outgoing=True, pattern="^.enablespotify$")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}enablespotify$")
 @errors_handler
 async def set_biostgraph(setstbio):
     setrecursionlimit(700000)
@@ -122,7 +122,7 @@ async def set_biostgraph(setstbio):
         await setstbio.edit(SPO_BIO_RUNNING)
 
 
-@register(outgoing=True, pattern="^.disablespotify$")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}disablespotify$")
 @errors_handler
 async def set_biodgraph(setdbio):
     global SPOTIFYCHECK
