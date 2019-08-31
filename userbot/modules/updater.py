@@ -25,7 +25,7 @@ async def gen_chlog(repo, diff):
 
 
 async def is_off_br(br):
-    off_br = ['master', 'staging', 'redis']
+    off_br = ['staging-nodb']
     for k in off_br:
         if k == br:
             return 1
@@ -39,7 +39,7 @@ async def upstream(ups):
     if not ups.text[0].isalpha() and ups.text[0] not in ("/", "#", "@", "!"):
         await ups.edit("`Checking for updates, please wait....`")
         conf = ups.pattern_match.group(1)
-        off_repo = 'https://github.com/RaphielGang/Telegram-UserBot.git'
+        off_repo = 'https://github.com/Nick80835/Telegram-UserBot.git'
 
         try:
             txt = "`Oops.. Updater cannot continue due to "

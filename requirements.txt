@@ -23,8 +23,6 @@ telethon>=1.9
 urbandict>=0.5
 wikipedia>=1.4.0
 spotify_token
-pymongo[srv]
-redis
 dnspython
 lxml
 humanize

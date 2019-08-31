@@ -4,9 +4,7 @@
 # you may not use this file except in compliance with the License.
 #
 """ Init file which loads all of the modules """
-from userbot import LOGS, MONGO_DB_URI
-
-REQUIRE_DB = ['admin', 'afk', 'dbhelper', 'fban_gban', 'filter', 'lists', 'mute_chat', 'notes', 'pmpermit', 'time', 'welcomes']
+from userbot import LOGS
 
 def __list_all_modules():
     from os.path import dirname, basename, isfile
@@ -18,12 +16,7 @@ def __list_all_modules():
         if isfile(f) and f.endswith(".py") and not f.endswith("__init__.py")
     ]
 
-    if MONGO_DB_URI:
-        return all_modules
-    else:
-        for i in REQUIRE_DB: all_modules.remove(i)
-        LOGS.warn("No MongoDB URI set, excluding modules that depend on it.")
-        return all_modules
+    return all_modules
 
 
 ALL_MODULES = sorted(__list_all_modules())

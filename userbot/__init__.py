@@ -11,7 +11,6 @@ from logging import basicConfig, getLogger, INFO, DEBUG
 from sys import version_info
 
 import pylast
-import redis
 from dotenv import load_dotenv
 from requests import get
 from telethon import TelegramClient
@@ -57,14 +56,6 @@ PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
 
 CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
-MONGO_DB_URI = os.environ.get("MONGO_DB_URI", None)
-
-try:
-    from pymongo import MongoClient
-except ModuleNotFoundError:
-    LOGS.warn("PyMongo not installed, yeeting the URI if there ever was one.")
-    MONGO_DB_URI = None
-
 SCREENSHOT_LAYER_ACCESS_KEY = os.environ.get("SCREENSHOT_LAYER_ACCESS_KEY",
                                              None)
 
@@ -109,32 +100,6 @@ URL += 'databasescape/master/learning-data-root.check'
 
 with open('learning-data-root.check', 'wb') as load:
     load.write(get(URL).content)
-
-if MONGO_DB_URI:
-    # Init Mongo
-    MONGOCLIENT = MongoClient(MONGO_DB_URI, 27017, serverSelectionTimeoutMS=1)
-    MONGO = MONGOCLIENT.userbot
-
-def is_mongo_alive():
-    try:
-        MONGOCLIENT.server_info()
-    except BaseException:
-        return False
-    return True
-
-
-# Init Redis
-# Redis will be hosted inside the docker container that hosts the bot
-# We need redis for just caching, so we just leave it to non-persistent
-REDIS = redis.StrictRedis(host='localhost', port=6379, db=0)
-
-
-def is_redis_alive():
-    try:
-        REDIS.ping()
-        return True
-    except BaseException:
-        return False
 
 
 # Global Variables
