@@ -8,7 +8,7 @@
 import os
 from distutils.util import strtobool as sb
 from logging import basicConfig, getLogger, INFO, DEBUG
-from sys import version_info
+from sys import version_info, executable
 
 import pylast
 from dotenv import load_dotenv
@@ -19,6 +19,9 @@ load_dotenv("config.env")
 
 # Command prefix
 CMDPREFIX = os.environ.get("CMDPREFIX", ".")
+
+try: BASEDIR
+except: BASEDIR = os.getcwd()
 
 # Bot Logs setup:
 CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
