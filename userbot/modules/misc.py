@@ -6,7 +6,7 @@
 # You can find misc modules, which dont fit in anything xD
 """ Userbot module for other small commands. """
 
-from random import randint
+from random import randint, choice
 from time import sleep
 from os import execl
 import sys
@@ -14,33 +14,35 @@ from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}random")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}random(.*)")
 @errors_handler
 async def randomise(items):
-    """ For .random command, get a random item from the list of items. """
-    itemo = (items.text[8:]).split()
-    index = randint(1, len(itemo) - 1)
-    await items.edit("**Query: **\n`" + items.text[8:] +
-                        "`\n**Output: **\n`" + itemo[index] + "`")
+    # For .random command, get a random item from the list of items.
+    if len(items.pattern_match.group().split()) > 1:
+        itemlist = items.pattern_match.group().split()[1:]
+        chosenitem = choice(itemlist)
+        await items.edit("**Query: **\n`" + ' '.join(itemlist) +
+                            "`\n**Output: **\n`" + chosenitem + "`")
+    else:
+        await items.edit('`Give me a list of stuff to pick from!`')
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}sleep( [0-9]+)?$")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}sleep(.*)")
 @errors_handler
 async def sleepybot(time):
-    """ For .sleep command, let the userbot snooze for a few second. """
-    if " " not in time.pattern_match.group(1):
-        await time.reply("Syntax: `.sleep [seconds]`")
-    else:
-        counter = int(time.pattern_match.group(1))
-        await time.edit("`I am sulking and snoozing....`")
-        sleep(2)
+    # For .sleep command, let the userbot snooze for a few second.
+    if len(time.pattern_match.group().split()) > 1:
+        counter = int(time.pattern_match.group().split()[1])
+        await time.edit("`I'm sulking and snoozing...`")
         if BOTLOG:
             await time.client.send_message(
                 BOTLOG_CHATID,
-                "You put the bot to sleep for " + str(counter) +
-                " seconds",
+                f"You put the bot to sleep for {str(counter)} seconds",
             )
         sleep(counter)
+        await time.edit("`Okay, I'm done sleeping!`")
+    else:
+        await time.edit("**Syntax:** `.sleep [seconds]`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}shutdown$")
