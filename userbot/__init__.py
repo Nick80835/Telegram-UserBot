@@ -31,7 +31,7 @@ CMDPREFIX = getstr("CMDPREFIX", ".")
 
 # Bot logging setup
 CONSOLE_LOGGER_VERBOSE = getbool("CONSOLE_LOGGER_VERBOSE", "False")
-BOTLOG_CHATID = getint("BOTLOG_CHATID", "0")
+BOTLOG_CHATID = getstr("BOTLOG_CHATID", None)
 BOTLOG = getbool("BOTLOG", "False")
 
 basicConfig(
