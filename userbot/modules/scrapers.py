@@ -390,6 +390,7 @@ async def download_video(v_url):
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}cr (\S*) ?(\S*) ?(\S*)")
+@errors_handler
 async def currency(cconvert):
     """ For .cr command, convert amount, from, to. """
     amount = cconvert.pattern_match.group(1)
