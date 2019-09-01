@@ -5,7 +5,7 @@
 #
 """ Userbot initialization. """
 
-import os, pylast
+import os, pylast, re
 from distutils.util import strtobool as sb
 from dotenv import load_dotenv
 from logging import basicConfig, getLogger, INFO, DEBUG
@@ -27,7 +27,7 @@ API_KEY = getstr("API_KEY", None)
 API_HASH = getstr("API_HASH", None)
 
 # Command prefix
-CMDPREFIX = getstr("CMDPREFIX", ".")
+CMDPREFIX = re.escape(getstr("CMDPREFIX", "."))
 
 # Bot logging setup
 CONSOLE_LOGGER_VERBOSE = getbool("CONSOLE_LOGGER_VERBOSE", "False")
