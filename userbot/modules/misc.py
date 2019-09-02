@@ -41,6 +41,9 @@ async def sleepybot(time):
             )
         sleep(counter)
         await time.edit("`Okay, I'm done sleeping!`")
+        if randint(0, 4) == 1 and not time.chat.default_banned_rights.send_media:
+            try: await time.reply(file="userbot/files/xp_startup.mp3")
+            except: pass # it be like that sometimes
     else:
         await time.edit("**Syntax:** `.sleep [seconds]`")
 
@@ -49,11 +52,19 @@ async def sleepybot(time):
 @errors_handler
 async def killdabot(event):
     """ For .shutdown command, shut the bot down."""
-    await event.edit("`Goodbye *Windows XP shutdown sound*....`")
+    await event.edit("`Goodbye...`")
+
+    if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
+        try: await event.reply(file="userbot/files/xp_shutdown.mp3")
+        except: pass # it be like that sometimes
+
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#SHUTDOWN \n"
                                         "Bot shut down")
-    await event.client.disconnect()
+
+    try: await event.client.disconnect()
+    except: pass # just shut up
+    exit(0)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}restart$")
