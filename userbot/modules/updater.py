@@ -69,10 +69,8 @@ async def upstream(ups):
     await ups.edit('`Successfully checked out latest bot revision!\n'
                     'The bot will not pass go, will not collect $200, and will not automatically restart...`')
 
-    try:
-        await ups.client.disconnect()
-    except:
-        pass # we dont care
+    try: await ups.client.disconnect()
+    except: pass # we dont care
     
     gc.collect()
 
