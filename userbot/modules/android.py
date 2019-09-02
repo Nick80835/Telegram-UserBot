@@ -119,7 +119,11 @@ async def devices_specifications(request):
             data = re.findall(r'</b>: (.*?)<br/>', item)[0]\
                 .replace('<b>', '').replace('</b>', '').strip()
             reply += f'**{title}**: {data}\n'
-    await request.edit(reply)
+    
+    if reply or reply != "":
+        await request.edit(reply)
+    else:
+        await request.edit(f"`Spec search failed for query: {brand} {device}`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}twrp(?: |$)(\S*)")
