@@ -25,7 +25,6 @@ from requests import get
 from urbandict import define
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
-
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CURRENCY_API, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
@@ -35,7 +34,7 @@ LANG = "en"
 @register(outgoing=True, pattern=f"^{CMDPREFIX}img (.*)")
 @errors_handler
 async def img_sampler(event):
-    """ For .img command, search and return images matching the query. """
+    # For .img command, search and return images matching the query
     await event.edit("Processing...")
     query = event.pattern_match.group(1)
     lim = findall(r"lim=\d+", query)
@@ -68,19 +67,19 @@ async def img_sampler(event):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}google (.*)")
 @errors_handler
-async def gsearch(q_event):
-    """ For .google command, do a Google search. """
-    await q_event.edit("`Searching...`")
-    match_ = q_event.pattern_match.group(1)
+async def gsearch(event):
+    # For .google command, do a Google search
+    await event.edit("`Searching...`")
+    match_ = event.pattern_match.group(1)
     match = parse.quote_plus(match_)
     result = ""
     for i in search(match, stop=8):
         result += i
         result += "\n"
-    await q_event.edit("**Search Query:**\n`" + match_ +
+    await event.edit("**Search Query:**\n`" + match_ +
                         "`\n\n**Result:**\n" + result)
     if BOTLOG:
-        await q_event.client.send_message(
+        await event.client.send_message(
             BOTLOG_CHATID,
             "Google Search query " + match_ + " was executed successfully",
         )
@@ -88,48 +87,48 @@ async def gsearch(q_event):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}wiki (.*)")
 @errors_handler
-async def wiki(wiki_q):
-    """ For .google command, fetch content from Wikipedia. """
-    match = wiki_q.pattern_match.group(1)
+async def wiki(event):
+    # For .google command, fetch content from Wikipedia
+    match = event.pattern_match.group(1)
     try:
         summary(match)
     except DisambiguationError as error:
-        await wiki_q.edit(f"Disambiguated page found.\n\n{error}")
+        await event.edit(f"Disambiguated page found.\n\n{error}")
         return
     except PageError as pageerror:
-        await wiki_q.edit(f"Page not found.\n\n{pageerror}")
+        await event.edit(f"Page not found.\n\n{pageerror}")
         return
     result = summary(match)
     if len(result) >= 4096:
         file = open("output.txt", "w+")
         file.write(result)
         file.close()
-        await wiki_q.client.send_file(
-            wiki_q.chat_id,
+        await event.client.send_file(
+            event.chat_id,
             "output.txt",
-            reply_to=wiki_q.id,
+            reply_to=event.id,
             caption="`Output too large, sending as file`",
         )
         if os.path.exists("output.txt"):
             os.remove("output.txt")
         return
-    await wiki_q.edit("**Search:**\n`" + match + "`\n\n**Result:**\n" +
+    await event.edit("**Search:**\n`" + match + "`\n\n**Result:**\n" +
                         result)
     if BOTLOG:
-        await wiki_q.client.send_message(
+        await event.client.send_message(
             BOTLOG_CHATID, f"Wiki query {match} was executed successfully")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}ud (.*)")
 @errors_handler
-async def urban_dict(ud_e):
-    """ For .ud command, fetch content from Urban Dictionary. """
-    await ud_e.edit("Processing...")
-    query = ud_e.pattern_match.group(1)
+async def urban_dict(event):
+    # For .ud command, fetch content from Urban Dictionary
+    await event.edit("Processing...")
+    query = event.pattern_match.group(1)
     try:
         define(query)
     except HTTPError:
-        await ud_e.edit(f"Sorry, couldn't find any results for: {query}")
+        await event.edit(f"Sorry, couldn't find any results for: {query}")
         return
     mean = define(query)
     deflen = sum(len(i) for i in mean[0]["def"])
@@ -137,58 +136,58 @@ async def urban_dict(ud_e):
     meanlen = deflen + exalen
     if int(meanlen) >= 0:
         if int(meanlen) >= 4096:
-            await ud_e.edit("`Output too large, sending as file.`")
+            await event.edit("`Output too large, sending as file.`")
             file = open("output.txt", "w+")
             file.write("Text: " + query + "\n\nMeaning: " +
                         mean[0]["def"] + "\n\n" + "Example: \n" +
                         mean[0]["example"])
             file.close()
-            await ud_e.client.send_file(
-                ud_e.chat_id,
+            await event.client.send_file(
+                event.chat_id,
                 "output.txt",
                 caption="`Output was too large, sent it as a file.`")
             if os.path.exists("output.txt"):
                 os.remove("output.txt")
-            await ud_e.delete()
+            await event.delete()
             return
-        await ud_e.edit("Text: **" + query + "**\n\nMeaning: **" +
+        await event.edit("Text: **" + query + "**\n\nMeaning: **" +
                         mean[0]["def"] + "**\n\n" + "Example: \n__" +
                         mean[0]["example"] + "__")
         if BOTLOG:
-            await ud_e.client.send_message(
+            await event.client.send_message(
                 BOTLOG_CHATID,
                 "ud query " + query + " executed successfully.")
     else:
-        await ud_e.edit("No result found for **" + query + "**")
+        await event.edit("No result found for **" + query + "**")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}tts(?: |$)([\s\S]*)")
 @errors_handler
-async def text_to_speech(query):
-    """ For .tts command, a wrapper for Google Text-to-Speech. """
-    textx = await query.get_reply_message()
-    message = query.pattern_match.group(1)
+async def text_to_speech(event):
+    # For .tts command, a wrapper for Google Text-to-Speech
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await query.edit("`Give a text or reply to a "
+        await event.edit("`Give a text or reply to a "
                             "message for Text-to-Speech!`")
         return
 
     try:
         gTTS(message, LANG)
     except AssertionError:
-        await query.edit('The text is empty.\n'
+        await event.edit('The text is empty.\n'
                             'Nothing left to speak after pre-precessing, '
                             'tokenizing and cleaning.')
         return
     except ValueError:
-        await query.edit('Language is not supported.')
+        await event.edit('Language is not supported.')
         return
     except RuntimeError:
-        await query.edit('Error loading the languages dictionary.')
+        await event.edit('Error loading the languages dictionary.')
         return
     tts = gTTS(message, LANG)
     tts.save("k.mp3")
@@ -199,37 +198,37 @@ async def text_to_speech(query):
         tts = gTTS(message, LANG)
         tts.save("k.mp3")
     with open("k.mp3", "r"):
-        await query.client.send_file(query.chat_id,
+        await event.client.send_file(event.chat_id,
                                         "k.mp3",
                                         voice_note=True)
         os.remove("k.mp3")
         if BOTLOG:
-            await query.client.send_message(
+            await event.client.send_message(
                 BOTLOG_CHATID,
                 "tts of " + message + " executed successfully!")
-        await query.delete()
+        await event.delete()
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}trt(?: |$)([\s\S]*)")
 @errors_handler
-async def translateme(trans):
-    """ For .trt command, translate the given text using Google Translate. """
+async def translateme(event):
+    # For .trt command, translate the given text using Google Translate
     translator = Translator()
-    textx = await trans.get_reply_message()
-    message = trans.pattern_match.group(1)
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await trans.edit("`Give a text or reply "
+        await event.edit("`Give a text or reply "
                             "to a message to translate!`")
         return
 
     try:
         reply_text = translator.translate(deEmojify(message), dest=LANG)
     except ValueError:
-        await trans.edit("Invalid destination language.")
+        await event.edit("Invalid destination language.")
         return
 
     source_lan = LANGUAGES[f'{reply_text.src.lower()}']
@@ -237,10 +236,10 @@ async def translateme(trans):
     reply_text = f"**Source ({source_lan.title()}):**`\n{message}`**\n\
 \nTranslation ({transl_lan.title()}):**`\n{reply_text.text}`"
 
-    await trans.client.send_message(trans.chat_id, reply_text)
-    await trans.delete()
+    await event.client.send_message(event.chat_id, reply_text)
+    await event.delete()
     if BOTLOG:
-        await trans.client.send_message(
+        await event.client.send_message(
             BOTLOG_CHATID,
             f"Translate query {message} was executed successfully",
         )
@@ -248,30 +247,30 @@ async def translateme(trans):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}lang (.*)")
 @errors_handler
-async def lang(value):
-    """ For .lang command, change the default langauge of userbot scrapers. """
+async def lang(event):
+    # For .lang command, change the default langauge of userbot scrapers
     global LANG
-    LANG = value.pattern_match.group(1)
-    await value.edit("Default language changed to **" + LANG + "**")
+    LANG = event.pattern_match.group(1)
+    await event.edit("Default language changed to **" + LANG + "**")
     if BOTLOG:
-        await value.client.send_message(
+        await event.client.send_message(
             BOTLOG_CHATID, "Default language changed to **" + LANG + "**")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}yt (.*)")
 @errors_handler
-async def yt_search(video_q):
-    """ For .yt command, do a YouTube search from Telegram. """
-    query = video_q.pattern_match.group(1)
+async def yt_search(event):
+    # For .yt command, do a YouTube search from Telegram
+    query = event.pattern_match.group(1)
     result = ''
     i = 1
 
     if not YOUTUBE_API_KEY:
-        await video_q.edit("`Error: YouTube API key missing!\
+        await event.edit("`Error: YouTube API key missing!\
             Add it to environment vars or config.env.`")
         return
 
-    await video_q.edit("```Processing...```")
+    await event.edit("```Processing...```")
 
     full_response = youtube_search(query)
     videos_json = full_response[1]
@@ -284,7 +283,7 @@ async def yt_search(video_q):
 
     reply_text = f"**Search Query:**\n`{query}`\n\n**Result:**\n{result}"
 
-    await video_q.edit(reply_text)
+    await event.edit(reply_text)
 
 
 def youtube_search(query,
@@ -297,6 +296,8 @@ def youtube_search(query,
                     'v3',
                     developerKey=YOUTUBE_API_KEY,
                     cache_discovery=False)
+    
+    # pylint: disable=no-member
     search_response = youtube.search().list(
         q=query,
         type="video",
@@ -325,12 +326,12 @@ def youtube_search(query,
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}yt_dl (\S*) ?(\S*)")
 @errors_handler
-async def download_video(v_url):
-    """ For .yt_dl command, download videos from YouTube. """
-    url = v_url.pattern_match.group(1)
-    quality = v_url.pattern_match.group(2)
+async def download_video(event):
+    # For .yt_dl command, download videos from YouTube
+    url = event.pattern_match.group(1)
+    quality = event.pattern_match.group(2)
 
-    await v_url.edit("**Fetching...**")
+    await event.edit("**Fetching...**")
 
     video = YouTube(url)
 
@@ -351,7 +352,7 @@ async def download_video(v_url):
             available_qualities += f"{item.resolution}, "
         available_qualities += all_streams[-1].resolution
 
-        await v_url.edit("**A stream matching your query wasn't found. "
+        await event.edit("**A stream matching your query wasn't found. "
                             "Try again with different options.\n**"
                             "**Available Qualities:**\n"
                             f"{available_qualities}")
@@ -360,7 +361,7 @@ async def download_video(v_url):
     video_size = video_stream.filesize / 1000000
 
     if video_size >= 50:
-        await v_url.edit(
+        await event.edit(
             ("**File larger than 50MB. Sending the link instead.\n**"
                 f"Get the video [here]({video_stream.url})\n\n"
                 "**If the video plays instead of downloading, "
@@ -369,7 +370,7 @@ async def download_video(v_url):
                 "to download the video.**"))
         return
 
-    await v_url.edit("**Downloading...**")
+    await event.edit("**Downloading...**")
 
     video_stream.download(filename=video.title)
 
@@ -378,36 +379,36 @@ async def download_video(v_url):
     with open('thumbnail.jpg', 'wb') as file:
         file.write(resp.content)
 
-    await v_url.edit("**Uploading...**")
-    await bot.send_file(v_url.chat_id,
+    await event.edit("**Uploading...**")
+    await bot.send_file(event.chat_id,
                         f'{safe_filename(video.title)}.mp4',
                         caption=f"{video.title}",
                         thumb="thumbnail.jpg")
 
     os.remove(f"{safe_filename(video.title)}.mp4")
     os.remove('thumbnail.jpg')
-    await v_url.delete()
+    await event.delete()
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}cr (\S*) ?(\S*) ?(\S*)")
 @errors_handler
-async def currency(cconvert):
-    """ For .cr command, convert amount, from, to. """
-    amount = cconvert.pattern_match.group(1)
-    currency_from = cconvert.pattern_match.group(3).upper()
-    currency_to = cconvert.pattern_match.group(2).upper()
+async def currency(event):
+    # For .cr command, convert amount, from, to
+    amount = event.pattern_match.group(1)
+    currency_from = event.pattern_match.group(3).upper()
+    currency_to = event.pattern_match.group(2).upper()
     data = get(
         f"https://free.currconv.com/api/v7/convert?apiKey={CURRENCY_API}&q={currency_from}_{currency_to}&compact=ultra"
     ).json()
     result = data[f'{currency_from}_{currency_to}']
     result = float(amount) / float(result)
     result = round(result, 5)
-    await cconvert.edit(
+    await event.edit(
         f"{amount} {currency_to} is:\n`{result} {currency_from}`")
 
 
 def deEmojify(inputString):
-    """ Remove emojis and other non-safe characters from string """
+    # Remove emojis and other non-safe characters from string
     return get_emoji_regexp().sub(u'', inputString)
 
 
@@ -416,15 +417,20 @@ CMD_HELP.update({
     ".img <search_query>"
     "\nUsage: Does an image search on Google and shows two images."
 })
-CMD_HELP.update(
-    {'google': ".google <search_query>"
-     "\nUsage: Does a search on Google."})
-CMD_HELP.update(
-    {'wiki': ".wiki <search_query>"
-     "\nUsage: Does a Wikipedia search."})
-CMD_HELP.update(
-    {'ud': ".ud <search_query>"
-     "\nUsage: Does a search on Urban Dictionary."})
+CMD_HELP.update({
+    'google':
+    ".google <search_query>"
+    "\nUsage: Does a search on Google."
+})
+CMD_HELP.update({'wiki':
+    ".wiki <search_query>"
+    "\nUsage: Does a Wikipedia search."
+})
+CMD_HELP.update({
+    'ud':
+    ".ud <search_query>"
+    "\nUsage: Does a search on Urban Dictionary."
+})
 CMD_HELP.update({
     'tts':
     ".tts <text> or reply to someones text with .trt"
@@ -442,9 +448,10 @@ CMD_HELP.update({
     "userbot scrapers used for Google TRT, "
     "TTS may not work."
 })
-CMD_HELP.update(
-    {'yt': ".yt <search_query>"
-     "\nUsage: Does a YouTube search. "})
+CMD_HELP.update({
+    'yt': ".yt <search_query>"
+    "\nUsage: Does a YouTube search. "
+})
 CMD_HELP.update({
     'yt_dl':
     ".yt_dl <url> <quality>(optional)"

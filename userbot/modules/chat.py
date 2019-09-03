@@ -5,9 +5,7 @@
 """ Userbot module containing userid, chatid and log commands"""
 
 from time import sleep
-
 from telethon.tl.functions.channels import LeaveChannelRequest
-
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
@@ -15,7 +13,7 @@ from userbot.events import register, errors_handler
 @register(outgoing=True, pattern=f"^{CMDPREFIX}userid$")
 @errors_handler
 async def useridgetter(target):
-    """ For .userid command, returns the ID of the target user. """
+    # For .userid command, returns the ID of the target user
     message = await target.get_reply_message()
     if message:
         if not message.forward:

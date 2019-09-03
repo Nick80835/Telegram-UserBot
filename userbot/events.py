@@ -6,20 +6,15 @@
 """ Userbot module for managing events.
  One of the main components of the userbot. """
 
+import math, subprocess, sys, traceback, datetime, asyncio
 from telethon import events
-import asyncio
 from userbot import bot
 from traceback import format_exc
 from time import gmtime, strftime
-import math
-import subprocess
-import sys
-import traceback
-import datetime
 
 
 def register(**args):
-    """ Register a new event. """
+    # Register a new event
     pattern = args.get('pattern', None)
     disable_edited = args.get('disable_edited', False)
 

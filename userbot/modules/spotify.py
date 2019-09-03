@@ -1,14 +1,12 @@
+import spotify_token as st
 from asyncio import sleep
 from json import loads
 from json.decoder import JSONDecodeError
 from os import environ
 from sys import setrecursionlimit
-
-import spotify_token as st
 from requests import get
 from telethon.errors import AboutTooLongError
 from telethon.tl.functions.account import UpdateProfileRequest
-
 from userbot import (DEFAULT_BIO, CMD_HELP, BOTLOG, BOTLOG_CHATID, BIO_PREFIX,
                      SPOTIFY_PASS, SPOTIFY_USERNAME, bot, CMDPREFIX)
 from userbot.events import register, errors_handler
@@ -111,28 +109,33 @@ async def dirtyfix():
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}enablespotify$")
 @errors_handler
-async def set_biostgraph(setstbio):
+async def set_biostgraph(event):
     setrecursionlimit(700000)
     if not SPOTIFYCHECK:
         environ["errorcheck"] = "0"
-        await setstbio.edit(SPO_BIO_ENABLED)
+        await event.edit(SPO_BIO_ENABLED)
         await get_spotify_token()
         await dirtyfix()
     else:
-        await setstbio.edit(SPO_BIO_RUNNING)
+        await event.edit(SPO_BIO_RUNNING)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}disablespotify$")
 @errors_handler
-async def set_biodgraph(setdbio):
+async def set_biodgraph(event):
     global SPOTIFYCHECK
     global RUNNING
     SPOTIFYCHECK = False
     RUNNING = False
     await bot(UpdateProfileRequest(about=DEFAULT_BIO))
-    await setdbio.edit(SPO_BIO_DISABLED)
+    await event.edit(SPO_BIO_DISABLED)
 
 
-CMD_HELP.update({"enablespotify": "Usage: Enable Spotify bio updating."})
-
-CMD_HELP.update({"disablespotify": "Usage: Disable Spotify bio updating."})
+CMD_HELP.update({
+    "enablespotify":
+    "Usage: Enable Spotify bio updating."
+})
+CMD_HELP.update({
+    "disablespotify":
+    "Usage: Disable Spotify bio updating."
+})

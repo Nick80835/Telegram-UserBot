@@ -5,32 +5,29 @@
 #
 """ Userbot module for kanging stickers or making new ones. """
 
-import io
-import urllib.request
-
-import math
+import io, urllib.request, math
 from PIL import Image
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
-
 from userbot import bot, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
+
 PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
 A pack can't have more than 120 stickers at the moment."
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}kang")
 @errors_handler
-async def kang(args):
-    """ For .kang command, kangs stickers or creates new ones. """
+async def kang(event):
+    # For .kang command, kangs stickers or creates new ones.
     user = await bot.get_me()
     if not user.username:
         user.username = user.first_name
-    message = await args.get_reply_message()
+    message = await event.get_reply_message()
     photo = None
     emojibypass = False
     is_anim = False
     emoji = ""
-    await args.edit("`Kanging..........`")
+    await event.edit("`Kanging..........`")
     if message and message.media:
         if isinstance(message.media, MessageMediaPhoto):
             photo = io.BytesIO()
@@ -49,14 +46,14 @@ async def kang(args):
             is_anim = True
             photo = 1
         else:
-            await args.edit("`Unsupported File!`")
+            await event.edit("`Unsupported File!`")
             return
     else:
-        await args.edit("`Reply to photo to kang it bruh`")
+        await event.edit("`Reply to photo to kang it bruh`")
         return
 
     if photo:
-        splat = args.text.split()
+        splat = event.text.split()
         if not emojibypass:
             emoji = "🤔"
         pack = 1
@@ -103,7 +100,7 @@ async def kang(args):
                     pack += 1
                     packname = f"a{user.id}_by_{user.username}_{pack}"
                     packnick = f"@{user.username}'s userbot pack {pack}"
-                    await args.edit("`Switching to Pack " + str(pack) +
+                    await event.edit("`Switching to Pack " + str(pack) +
                                     " due to insufficient space`")
                     await conv.send_message(packname)
                     x = await conv.get_response()
@@ -118,7 +115,7 @@ async def kang(args):
                         await bot.send_read_acknowledge(conv.chat_id)
                         if is_anim:
                             await bot.forward_messages(
-                                'Stickers', [message.id], args.chat_id)
+                                'Stickers', [message.id], event.chat_id)
                         else:
                             file.seek(0)
                             await conv.send_file(file, force_document=True)
@@ -144,13 +141,13 @@ async def kang(args):
                         await conv.get_response()
                         # Ensure user doesn't get spamming notifications
                         await bot.send_read_acknowledge(conv.chat_id)
-                        await args.edit(
+                        await event.edit(
                             f"Sticker added in a Different Pack! This Pack is Newly created! Your pack can be found [here](t.me/addstickers/{packname})",
                             parse_mode='md')
                         return
                 if is_anim:
                     await bot.forward_messages('Stickers', [message.id],
-                                                args.chat_id)
+                                                event.chat_id)
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)
@@ -164,7 +161,7 @@ async def kang(args):
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
         else:
-            await args.edit("Userbot sticker pack \
+            await event.edit("Userbot sticker pack \
 doesn't exist! Making a new one!")
             async with bot.conversation('Stickers') as conv:
                 await conv.send_message(cmd)
@@ -177,7 +174,7 @@ doesn't exist! Making a new one!")
                 await bot.send_read_acknowledge(conv.chat_id)
                 if is_anim:
                     await bot.forward_messages('Stickers', [message.id],
-                                                args.chat_id)
+                                                event.chat_id)
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)
@@ -204,7 +201,7 @@ doesn't exist! Making a new one!")
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
 
-        await args.edit(
+        await event.edit(
             f"Sticker added! Your pack can be found [here](t.me/addstickers/{packname})",
             parse_mode='md')
 

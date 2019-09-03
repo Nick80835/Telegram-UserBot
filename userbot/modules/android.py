@@ -8,7 +8,6 @@
 import re
 from requests import get
 from bs4 import BeautifulSoup
-
 from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
@@ -19,8 +18,8 @@ DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}magisk$")
 @errors_handler
-async def magisk(request):
-    """ magisk latest releases """
+async def magisk(event):
+    # for .magisk command, give links to the latest releases
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/master/'
     releases = 'Latest Magisk Releases:\n'
     for variant in ['stable', 'beta', 'canary_builds/canary']:
@@ -29,21 +28,21 @@ async def magisk(request):
         releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
                     f'[Uninstaller]({data["uninstaller"]["link"]})\n'
-    await request.edit(releases)
+    await event.edit(releases)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}device(?: |)(.*)")
 @errors_handler
-async def device_info(request):
-    """ get android device basic info from its codename """
-    textx = await request.get_reply_message()
-    device = "".join(request.pattern_match.groups())
+async def device_info(event):
+    # for .device command, search for a device based on name, codename, model
+    textx = await event.get_reply_message()
+    device = "".join(event.pattern_match.groups())
     if device:
         pass
     elif textx:
         device = textx.text
     else:
-        await request.edit("`Usage: .device <codename> / <model> / <name>`")
+        await event.edit("`Usage: .device <codename> / <model> / <name>`")
         return
     found = [
         i for i in get(DEVICES_DATA).json()
@@ -64,23 +63,23 @@ async def device_info(request):
                 f'**Model**: {model}\n\n'
     else:
         reply = f"`Couldn't find info about {device}!`\n"
-    await request.edit(reply)
+    await event.edit(reply)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}specs(?: |)([\S]*)(?: |)([\s\S]*)")
 @errors_handler
-async def devices_specifications(request):
-    """ Mobile devices specifications """
-    textx = await request.get_reply_message()
-    brand = request.pattern_match.group(1).lower()
-    device = request.pattern_match.group(2).lower()
+async def devices_specifications(event):
+    # for .specs command, list the specs for a given device
+    textx = await event.get_reply_message()
+    brand = event.pattern_match.group(1).lower()
+    device = event.pattern_match.group(2).lower()
     if brand and device:
         pass
     elif textx:
         brand = textx.text.split(' ')[0]
         device = ' '.join(textx.text.split(' ')[1:])
     else:
-        await request.edit("`Usage: .specs <brand> <device>`")
+        await event.edit("`Usage: .specs <brand> <device>`")
         return
     all_brands = BeautifulSoup(
         get('https://www.devicespecifications.com/en/brand-more').content,
@@ -94,7 +93,7 @@ async def devices_specifications(request):
             if brand == i.text.strip().lower()
         ][0]
     except IndexError:
-        await request.edit(f'`{brand} is unknown brand!`')
+        await event.edit(f'`{brand} is unknown brand!`')
     devices = BeautifulSoup(get(brand_page_url).content, 'lxml') \
         .findAll('div', {'class': 'model-listing-container-80'})
     device_page_url = None
@@ -105,7 +104,7 @@ async def devices_specifications(request):
             if device in i.text.strip().lower()
         ]
     except IndexError:
-        await request.edit(f"`can't find {device}!`")
+        await event.edit(f"`can't find {device}!`")
     if len(device_page_url) > 2:
         device_page_url = device_page_url[:2]
     reply = ''
@@ -121,28 +120,28 @@ async def devices_specifications(request):
             reply += f'**{title}**: {data}\n'
     
     if reply or reply != "":
-        await request.edit(reply)
+        await event.edit(reply)
     else:
-        await request.edit(f"`Spec search failed for query: {brand} {device}`")
+        await event.edit(f"`Spec search failed for query: {brand} {device}`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}twrp(?: |$)(\S*)")
 @errors_handler
-async def twrp(request):
-    """ get android device twrp """
-    textx = await request.get_reply_message()
-    device = request.pattern_match.group(1)
+async def twrp(event):
+    # for .twrp command, get a link to twrp for a given device
+    textx = await event.get_reply_message()
+    device = event.pattern_match.group(1)
     if device:
         pass
     elif textx:
         device = textx.text.split(' ')[0]
     else:
-        await request.edit("`Usage: .twrp <codename>`")
+        await event.edit("`Usage: .twrp <codename>`")
         return
     url = get(f'https://dl.twrp.me/{device}/')
     if url.status_code == 404:
         reply = f"`Couldn't find twrp downloads for {device}!`\n"
-        await request.edit(reply)
+        await event.edit(reply)
         return
     page = BeautifulSoup(url.content, 'lxml')
     download = page.find('table').find('tr').find('a')
@@ -153,10 +152,13 @@ async def twrp(request):
     reply = f'**Latest TWRP for {device}:**\n' \
         f'[{dl_file}]({dl_link}) - __{size}__\n' \
         f'**Updated:** __{date}__\n'
-    await request.edit(reply)
+    await event.edit(reply)
 
 
-CMD_HELP.update({"magisk": "Get latest Magisk releases"})
+CMD_HELP.update({
+    "magisk":
+    "Get latest Magisk releases"
+})
 CMD_HELP.update({
     "device":
     ".device <codename>\nUsage: Get info about android device codename or model."

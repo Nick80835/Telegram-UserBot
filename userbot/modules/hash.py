@@ -5,21 +5,18 @@
 #
 """ Userbot module containing hash and encode/decode commands. """
 
-from subprocess import PIPE
-from subprocess import run as runapp
-
 import pybase64
-
+from subprocess import PIPE, run as runapp
 from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}hash (.*)")
 @errors_handler
-async def gethash(hash_q):
-    """ For .hash command, find the md5,
-        sha1, sha256, sha512 of the string. """
-    hashtxt_ = hash_q.pattern_match.group(1)
+async def gethash(event):
+    # For .hash command, find the md5,
+    # sha1, sha256 and sha512 of the string.
+    hashtxt_ = event.pattern_match.group(1)
     hashtxt = open("hashdis.txt", "w+")
     hashtxt.write(hashtxt_)
     hashtxt.close()
@@ -38,37 +35,38 @@ async def gethash(hash_q):
         hashfile = open("hashes.txt", "w+")
         hashfile.write(ans)
         hashfile.close()
-        await hash_q.client.send_file(
-            hash_q.chat_id,
+        await event.client.send_file(
+            event.chat_id,
             "hashes.txt",
-            reply_to=hash_q.id,
+            reply_to=event.id,
             caption="`It's too big, sending a text file instead. `")
         runapp(["rm", "hashes.txt"], stdout=PIPE)
     else:
-        await hash_q.reply(ans)
+        await event.reply(ans)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}base64 (en|de) (.*)")
 @errors_handler
-async def endecrypt(query):
-    """ For .base64 command, find the base64 encoding of the given string. """
-    if query.pattern_match.group(1) == "en":
+async def endecrypt(event):
+    # For .base64 command, find the base64 encoding of the given string.
+    if event.pattern_match.group(1) == "en":
         lething = str(
-            pybase64.b64encode(bytes(query.pattern_match.group(2),
+            pybase64.b64encode(bytes(event.pattern_match.group(2),
                                         "utf-8")))[2:]
-        await query.reply("Encoded: `" + lething[:-1] + "`")
+        await event.reply("Encoded: `" + lething[:-1] + "`")
     else:
         lething = str(
-            pybase64.b64decode(bytes(query.pattern_match.group(2),
+            pybase64.b64decode(bytes(event.pattern_match.group(2),
                                         "utf-8"),
                                 validate=True))[2:]
-        await query.reply("Decoded: `" + lething[:-1] + "`")
+        await event.reply("Decoded: `" + lething[:-1] + "`")
 
-
-CMD_HELP.update({"base64": "Find the base64 encoding of the given string"})
 
 CMD_HELP.update({
+    "base64":
+    "Find the base64 encoding of the given string"
+})
+CMD_HELP.update({
     "hash":
-    "Find the md5, sha1, sha256, "
-    "sha512 of the string when written into a txt file."
+    "Find the md5, sha1, sha256 and sha512 of the string when written into a txt file."
 })

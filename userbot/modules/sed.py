@@ -9,7 +9,6 @@
 
 import re
 from sre_constants import error as sre_err
-
 from userbot import CMD_HELP
 from userbot.events import register, errors_handler
 
@@ -17,7 +16,7 @@ DELIMITERS = ("/", ":", "|", "_")
 
 
 def separate_sed(sed_string):
-    """ Separate sed arguments. """
+    # Separate sed arguments
     if (len(sed_string) > 3 and sed_string[3] in DELIMITERS
             and sed_string.count(sed_string[3]) >= 2):
         delim = sed_string[3]
@@ -60,29 +59,29 @@ def separate_sed(sed_string):
 
 @register(outgoing=True, pattern="^sed")
 @errors_handler
-async def sed(command):
-    """ For sed command, use sed on Telegram. """
-    sed_result = separate_sed(command.text)
-    textx = await command.get_reply_message()
+async def sed(event):
+    # For sed command, use sed on Telegram
+    sed_result = separate_sed(event.text)
+    textx = await event.get_reply_message()
     if sed_result:
         if textx:
             to_fix = textx.text
         else:
-            await command.edit(
+            await event.edit(
                 "`Master, I don't have brains. Well you too don't I guess.`")
             return
 
         repl, repl_with, flags = sed_result
 
         if not repl:
-            await command.edit(
+            await event.edit(
                 "`Master, I don't have brains. Well you too don't I guess.`")
             return
 
         try:
             check = re.match(repl, to_fix, flags=re.IGNORECASE)
             if check and check.group(0).lower() == to_fix.lower():
-                await command.edit("`Boi!, that's a reply. Don't use sed`")
+                await event.edit("`Boi!, that's a reply. Don't use sed`")
                 return
 
             if "i" in flags and "g" in flags:
@@ -95,10 +94,10 @@ async def sed(command):
             else:
                 text = re.sub(repl, repl_with, to_fix, count=1).strip()
         except sre_err:
-            await command.edit("B O I! [Learn Regex](https://regexone.com)")
+            await event.edit("B O I! [Learn Regex](https://regexone.com)")
             return
         if text:
-            await command.edit("Did you mean? \n\n`" + text + "`")
+            await event.edit("Did you mean? \n\n`" + text + "`")
 
 
 CMD_HELP.update({

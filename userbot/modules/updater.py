@@ -6,6 +6,7 @@
 
 # This module updates the userbot based on Upstream revision
 
+import sys, os, gc
 from git import Repo
 from git.exc import (
     NoSuchPathError,
@@ -13,10 +14,8 @@ from git.exc import (
     InvalidGitRepositoryError,
     CheckoutError
 )
-
-import sys, os, gc
 from os import remove, execl, path
-from userbot import CMD_HELP, CMDPREFIX, LOGS, BASEDIR
+from userbot import CMD_HELP, CMDPREFIX, LOGS
 from userbot.events import register, errors_handler
 
 upstream_repo = 'https://github.com/Nick80835/Telegram-UserBot.git'
@@ -25,23 +24,23 @@ valid_branch = 'staging-nodb'
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}update(?: |$)(.*)")
 @errors_handler
-async def upstream(ups):
+async def upstream(event):
     # For the update command, checkout the latest revision on the remote
-    await ups.edit("`Checking for updates, please wait...`")
+    await event.edit("`Checking for updates, please wait...`")
 
     try:
         txt = "`Oops.. Updater cannot continue due to "
         txt += "some problems occured`\n\n**LOGTRACE:**\n"
         repo = Repo()
     except NoSuchPathError as error:
-        await ups.edit(f'{txt}\n`directory {error} is not found`')
+        await event.edit(f'{txt}\n`directory {error} is not found`')
         return
     except InvalidGitRepositoryError as error:
-        await ups.edit(f'{txt}\n`directory {error} does \
+        await event.edit(f'{txt}\n`directory {error} does \
                         not seems to be a git repository`')
         return
     except GitCommandError as error:
-        await ups.edit(f'{txt}\n`Early failure! {error}`')
+        await event.edit(f'{txt}\n`Early failure! {error}`')
         return
 
     try: # Ensure the upstream remote exists
@@ -54,22 +53,22 @@ async def upstream(ups):
     try: # Fetch the remote repository for updates
         upstream_remote.fetch()
     except: # Notify the user of a fetching error and bail
-        await ups.edit('`Failed to check for updates. :(`')
+        await event.edit('`Failed to check for updates. :(`')
         return
     
     try: # Checkout the remote branch locally
         upstream_remote.refs['staging-nodb'].checkout()
     except CheckoutError: # Notify the user of a checkout error and bail
-        await ups.edit('`Failed to checkout the updated branch due to local changes. :(`')
+        await event.edit('`Failed to checkout the updated branch due to local changes. :(`')
         return
     except: # In the case of any other random error, notify the user and bail
-        await ups.edit('`Failed to update due to an unknown error. :(`')
+        await event.edit('`Failed to update due to an unknown error. :(`')
         return
 
-    await ups.edit('`Successfully checked out latest bot revision!\n'
+    await event.edit('`Successfully checked out latest bot revision!\n'
                     'The bot will not pass go, will not collect $200, and will not automatically restart...`')
 
-    try: await ups.client.disconnect()
+    try: await event.client.disconnect()
     except: pass # we dont care
     
     gc.collect()

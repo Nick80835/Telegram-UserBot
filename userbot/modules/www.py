@@ -70,19 +70,18 @@ async def pingme(event):
     await event.edit(f"`Pong! {duration}ms`")
 
 
-CMD_HELP.update(
-    {"speed":
+CMD_HELP.update({
+    "speed":
     ".speed\n"
     "Usage: Conduct a speedtest and show the results."
 })
-
 CMD_HELP.update({
     "nearestdc":
     ".nearestdc\n"
     "Usage: Find the nearest datacenter from your server."
 })
-
-CMD_HELP.update(
-    {"ping":
+CMD_HELP.update({
+    "ping":
     ".ping\n"
-    "Usage: Show how long it takes to ping your bot."})
+    "Usage: Show how long it takes to ping your bot."
+})

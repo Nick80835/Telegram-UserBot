@@ -12,7 +12,7 @@ from userbot.events import register, errors_handler
 @register(outgoing=True, pattern=f"^{CMDPREFIX}help(?: |$)(.*)")
 @errors_handler
 async def help(event):
-    """ For .help command,"""
+    # For .help command
     args = event.pattern_match.group(1)
     if args:
         if args in CMD_HELP:

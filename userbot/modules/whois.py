@@ -9,10 +9,8 @@
     about any user on Telegram(including you!). """
 
 import os
-
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
-
 from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
@@ -22,7 +20,7 @@ TMP_DOWNLOAD_DIRECTORY = "./"
 @register(pattern=f"^{CMDPREFIX}whois(?: |$)(.*)", outgoing=True)
 @errors_handler
 async def who(event):
-    """ For .whois command, get info about a user. """
+    # For .whois command, get info about a user
     if event.fwd_from:
         return
 
@@ -56,7 +54,7 @@ async def who(event):
 
 
 async def get_user(event):
-    """ Get the user from argument or replied message. """
+    # Get the user from argument or replied message
     if event.reply_to_msg_id:
         previous_message = await event.get_reply_message()
         replied_user = await event.client(
@@ -91,7 +89,7 @@ async def get_user(event):
 
 
 async def fetch_info(replied_user, event):
-    """ Get details from the User object. """
+    # Get details from the User object
     user_id = replied_user.user.id
     first_name = replied_user.user.first_name
     last_name = replied_user.user.last_name

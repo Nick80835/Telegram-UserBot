@@ -5,37 +5,33 @@
 #
 """ Userbot module containing various sites direct links generators"""
 
+import requests, re, urllib.parse, json
 from os import popen
-import re
-import urllib.parse
-import json
 from random import choice
-import requests
 from bs4 import BeautifulSoup
 from humanize import naturalsize
-
 from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}direct(?: |$)([\s\S]*)")
 @errors_handler
-async def direct_link_generator(request):
-    """ direct links generator """
-    textx = await request.get_reply_message()
-    message = request.pattern_match.group(1)
+async def direct_link_generator(event):
+    # direct links generator
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await request.edit("`Usage: .direct <url> <url>`")
+        await event.edit("`Usage: .direct <url> <url>`")
         return
     reply = ''
     links = re.findall(r'\bhttps?://.*\.\S+', message)
     if not links:
         reply = "No links found!"
-        await request.edit(reply)
+        await event.edit(reply)
     for link in links:
         if 'drive.google.com' in link:
             reply += gdrive(link)
@@ -60,11 +56,11 @@ async def direct_link_generator(request):
         else:
             reply += '`' + re.findall(r"\bhttps?://(.*?[^/]+)",
                                         link)[0] + 'is not supported`\n'
-    await request.edit(reply)
+    await event.edit(reply)
 
 
 def gdrive(url: str) -> str:
-    """ GDrive direct links generator """
+    # GDrive direct links generator
     drive = 'https://drive.google.com'
     try:
         link = re.findall(r'\bhttps?://drive\.google\.com\S+', url)[0]
@@ -107,8 +103,8 @@ def gdrive(url: str) -> str:
 
 
 def zippy_share(url: str) -> str:
-    """ ZippyShare direct links generator
-    Based on https://github.com/LameLemon/ziggy"""
+    # ZippyShare direct links generator
+    # Based on https://github.com/LameLemon/ziggy
     reply = ''
     dl_url = ''
     try:
@@ -136,8 +132,8 @@ def zippy_share(url: str) -> str:
 
 
 def yandex_disk(url: str) -> str:
-    """ Yandex.Disk direct links generator
-    Based on https://github.com/wldhx/yadisk-direct"""
+    # Yandex.Disk direct links generator
+    # Based on https://github.com/wldhx/yadisk-direct
     reply = ''
     try:
         link = re.findall(r'\bhttps?://.*yadi\.sk\S+', url)[0]
@@ -157,8 +153,8 @@ def yandex_disk(url: str) -> str:
 
 
 def mega_dl(url: str) -> str:
-    """ MEGA.nz direct links generator
-    Using https://github.com/tonikelope/megadown"""
+    # MEGA.nz direct links generator
+    # Using https://github.com/tonikelope/megadown
     reply = ''
     try:
         link = re.findall(r'\bhttps?://.*mega.*\.nz\S+', url)[0]
@@ -181,8 +177,8 @@ def mega_dl(url: str) -> str:
 
 
 def cm_ru(url: str) -> str:
-    """ cloud.mail.ru direct links generator
-    Using https://github.com/JrMasterModelBuilder/cmrudl.py"""
+    # cloud.mail.ru direct links generator
+    # Using https://github.com/JrMasterModelBuilder/cmrudl.py
     reply = ''
     try:
         link = re.findall(r'\bhttps?://.*cloud\.mail\.ru\S+', url)[0]
@@ -205,7 +201,7 @@ def cm_ru(url: str) -> str:
 
 
 def mediafire(url: str) -> str:
-    """ MediaFire direct links generator """
+    # MediaFire direct links generator
     try:
         link = re.findall(r'\bhttps?://.*mediafire\.com\S+', url)[0]
     except IndexError:
@@ -222,7 +218,7 @@ def mediafire(url: str) -> str:
 
 
 def sourceforge(url: str) -> str:
-    """ SourceForge direct links generator """
+    # SourceForge direct links generator
     try:
         link = re.findall(r'\bhttps?://.*sourceforge\.net\S+', url)[0]
     except IndexError:
@@ -243,7 +239,7 @@ def sourceforge(url: str) -> str:
 
 
 def osdn(url: str) -> str:
-    """ OSDN direct links generator """
+    # OSDN direct links generator
     osdn_link = 'https://osdn.net'
     try:
         link = re.findall(r'\bhttps?://.*osdn\.net\S+', url)[0]
@@ -265,7 +261,7 @@ def osdn(url: str) -> str:
 
 
 def github(url: str) -> str:
-    """ GitHub direct links generator """
+    # GitHub direct links generator
     try:
         link = re.findall(r'\bhttps?://.*github\.com.*releases\S+', url)[0]
     except IndexError:
@@ -284,7 +280,7 @@ def github(url: str) -> str:
 
 
 def androidfilehost(url: str) -> str:
-    """ AFH direct links generator """
+    # AFH direct links generator
     try:
         link = re.findall(r'\bhttps?://.*androidfilehost.*fid.*\S+', url)[0]
     except IndexError:
@@ -335,9 +331,7 @@ def androidfilehost(url: str) -> str:
 
 
 def useragent():
-    """
-    useragent random setter
-    """
+    # useragent random setter
     useragents = BeautifulSoup(
         requests.get(
             'https://developers.whatismybrowser.com/'

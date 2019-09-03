@@ -10,9 +10,7 @@ from asyncio.subprocess import PIPE as asyncPIPE
 from os import remove
 from platform import python_version, uname
 from shutil import which
-
 from telethon import version
-
 from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
@@ -23,8 +21,8 @@ DEFAULTUSER = uname().node
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}sysd$")
 @errors_handler
-async def sysdetails(sysd):
-    """ For .sysd command, get system info using neofetch. """
+async def sysdetails(event):
+    # For .sysd command, get system info using neofetch
     try:
         neo = "neofetch --stdout"
         fetch = await asyncrunapp(
@@ -37,15 +35,15 @@ async def sysdetails(sysd):
         result = str(stdout.decode().strip()) \
             + str(stderr.decode().strip())
 
-        await sysd.edit("`" + result + "`")
+        await event.edit("`" + result + "`")
     except FileNotFoundError:
-        await sysd.edit("`Hella install neofetch first kthx`")
+        await event.edit("`Hella install neofetch first kthx`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}botver$")
 @errors_handler
 async def bot_ver(event):
-    """ For .botver command, get the bot version. """
+    # For .botver command, get the bot version
     if which("git") is not None:
         invokever = "git describe --all --long"
         ver = await asyncrunapp(
@@ -81,11 +79,11 @@ async def bot_ver(event):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}pip(?: |$)(.*)")
 @errors_handler
-async def pipcheck(pip):
-    """ For .pip command, do a pip search. """
-    pipmodule = pip.pattern_match.group(1)
+async def pipcheck(event):
+    # For .pip command, do a pip search
+    pipmodule = event.pattern_match.group(1)
     if pipmodule:
-        await pip.edit("`Searching . . .`")
+        await event.edit("`Searching . . .`")
         invokepip = f"pip3 search {pipmodule}"
         pipc = await asyncrunapp(
             invokepip,
@@ -99,34 +97,34 @@ async def pipcheck(pip):
 
         if pipout:
             if len(pipout) > 4096:
-                await pip.edit("`Output too large, sending as file`")
+                await event.edit("`Output too large, sending as file`")
                 file = open("output.txt", "w+")
                 file.write(pipout)
                 file.close()
-                await pip.client.send_file(
-                    pip.chat_id,
+                await event.client.send_file(
+                    event.chat_id,
                     "output.txt",
-                    reply_to=pip.id,
+                    reply_to=event.id,
                 )
                 remove("output.txt")
                 return
-            await pip.edit("**Query: **\n`"
+            await event.edit("**Query: **\n`"
                             f"{invokepip}"
                             "`\n**Result: **\n`"
                             f"{pipout}"
                             "`")
         else:
-            await pip.edit("**Query: **\n`"
+            await event.edit("**Query: **\n`"
                             f"{invokepip}"
                             "`\n**Result: **\n`No Result Returned/False`")
     else:
-        await pip.edit("`Use .help pip to see an example`")
+        await event.edit("`Use .help pip to see an example`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}alive$")
 @errors_handler
-async def amireallyalive(e):
-    await e.edit("`"
+async def amireallyalive(event):
+    await event.edit("`"
         "Your bot is running \n\n"
         f"Telethon version: {version.__version__} \n"
         f"Python: {python_version()} \n"
@@ -136,34 +134,41 @@ async def amireallyalive(e):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}aliveu")
 @errors_handler
-async def amireallyaliveuser(username):
-    """ For .aliveu command, change the username in the .alive command. """
-    message = username.text
+async def amireallyaliveuser(event):
+    # For .aliveu command, change the username in the .alive command
+    message = event.text
     output = '.aliveu [new user without brackets] nor can it be empty'
     if not (message == '.aliveu' or message[7:8] != ' '):
         newuser = message[8:]
         global DEFAULTUSER
         DEFAULTUSER = newuser
         output = 'Successfully changed user to ' + newuser + '!'
-    await username.edit("`" f"{output}" "`")
+    await event.edit("`" f"{output}" "`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}resetalive$")
 @errors_handler
-async def amireallyalivereset(ureset):
-    """ For .resetalive command, reset the username in the .alive command. """
+async def amireallyalivereset(event):
+    # For .resetalive command, reset the username in the .alive command
     global DEFAULTUSER
     DEFAULTUSER = uname().node
-    await ureset.edit("`" "Successfully reset user for alive!" "`")
+    await event.edit("`" "Successfully reset user for alive!" "`")
 
 
-CMD_HELP.update(
-    {"sysd": ".sysd"
-     "\nUsage: Show system information using neofetch."})
-CMD_HELP.update({"botver": ".botver" "\nUsage: Show the userbot version."})
-CMD_HELP.update(
-    {"pip": ".pip <module(s)>"
-     "\nUsage: Search module(s) in PyPi."})
+CMD_HELP.update({
+    "sysd":
+    ".sysd"
+    "\nUsage: Show system information using neofetch."
+})
+CMD_HELP.update({
+    "botver":
+    ".botver" "\nUsage: Show the userbot version."
+})
+CMD_HELP.update({
+    "pip":
+    ".pip <module(s)>"
+    "\nUsage: Search module(s) in PyPi."
+})
 CMD_HELP.update({
     "alive":
     ".alive"

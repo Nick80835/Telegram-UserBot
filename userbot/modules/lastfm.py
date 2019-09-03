@@ -4,15 +4,13 @@ from re import sub
 from urllib import parse
 from os import environ
 from sys import setrecursionlimit
-
 from telethon.errors import AboutTooLongError
 from telethon.tl.functions.account import UpdateProfileRequest
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import User as Userbot
 from telethon.errors.rpcerrorlist import FloodWaitError
-
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, DEFAULT_BIO, BIO_PREFIX, lastfm, LASTFM_USERNAME, bot, CMDPREFIX
-from userbot.events import register
+from userbot.events import register, errors_handler
 
 # =================== CONSTANT ===================
 LFM_BIO_ENABLED = "```last.fm current music to bio is now enabled.```"
@@ -37,8 +35,9 @@ LastLog = False
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}lastfm$")
+@errors_handler
 async def last_fm(lastFM):
-    """ For .lastfm command, fetch scrobble data from last.fm. """
+    # For .lastfm command, fetch scrobble data from last.fm.
     await lastFM.edit("Processing...")
     preview = None
     playing = User(LASTFM_USERNAME, lastfm).get_now_playing()
@@ -168,6 +167,7 @@ async def get_curr_track(lfmbio):
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}lastbio (\S*)")
+@errors_handler
 async def lastbio(lfmbio):
     arg = lfmbio.pattern_match.group(1)
     global LASTFMCHECK
@@ -192,6 +192,7 @@ async def lastbio(lfmbio):
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}lastlog (\S*)")
+@errors_handler
 async def lastlog(lstlog):
     arg = lstlog.pattern_match.group(1)
     global LastLog

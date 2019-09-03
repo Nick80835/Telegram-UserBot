@@ -12,12 +12,6 @@ from random import randint, choice, getrandbits
 from userbot import CMD_HELP, ZALG_LIST, CMDPREFIX
 from userbot.events import register, errors_handler
 
-
-#
-# ================= CONSTANT =================
-#
-
-
 METOOSTR = [
     "Me too thanks","Haha yes, me too","Same lol","Me irl",
     "Haha same","Same here","Haha yes","Yeah, same bro","Me rn",
@@ -77,11 +71,6 @@ RUNSREACTS = [
     "I am just walking off, coz me is too fat.",
     "I Fugged off!",
 ]
-
-
-#
-# ===========================================
-#
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}(\w+)say (.*)")
@@ -358,4 +347,7 @@ async def typewriter(typew): # Just a small command to make your keyboard become
         await asyncio.sleep(sleep_time)
 
 
-CMD_HELP.update({"memes": "Ask 🅱️ottom🅱️ext🅱️ot (@NotAMemeBot) for that."})
+CMD_HELP.update({
+    "memes":
+    "Ask 🅱️ottom🅱️ext🅱️ot (@NotAMemeBot) for that."
+})

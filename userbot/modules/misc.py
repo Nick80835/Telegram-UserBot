@@ -6,52 +6,52 @@
 # You can find misc modules, which dont fit in anything xD
 """ Userbot module for other small commands. """
 
+import sys
 from random import randint, choice
 from time import sleep
 from os import execl
-import sys
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}random(.*)")
 @errors_handler
-async def randomise(items):
-    # For .random command, get a random item from the list of items.
-    if len(items.pattern_match.group().split()) > 1:
-        itemlist = items.pattern_match.group().split()[1:]
+async def randomise(event):
+    # For .random command, get a random item from the list of event.
+    if len(event.pattern_match.group().split()) > 1:
+        itemlist = event.pattern_match.group().split()[1:]
         chosenitem = choice(itemlist)
-        await items.edit("**Query: **\n`" + ' '.join(itemlist) +
+        await event.edit("**Query: **\n`" + ' '.join(itemlist) +
                             "`\n**Output: **\n`" + chosenitem + "`")
     else:
-        await items.edit('`Give me a list of stuff to pick from!`')
+        await event.edit('`Give me a list of stuff to pick from!`')
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}sleep(.*)")
 @errors_handler
-async def sleepybot(time):
+async def sleepybot(event):
     # For .sleep command, let the userbot snooze for a few second.
-    if len(time.pattern_match.group().split()) > 1:
-        counter = int(time.pattern_match.group().split()[1])
-        await time.edit("`I'm sulking and snoozing...`")
+    if len(event.pattern_match.group().split()) > 1:
+        counter = int(event.pattern_match.group().split()[1])
+        await event.edit("`I'm sulking and snoozing...`")
         if BOTLOG:
-            await time.client.send_message(
+            await event.client.send_message(
                 BOTLOG_CHATID,
                 f"You put the bot to sleep for {str(counter)} seconds",
             )
         sleep(counter)
-        await time.edit("`Okay, I'm done sleeping!`")
-        if randint(0, 4) == 1 and not time.chat.default_banned_rights.send_media:
-            try: await time.reply(file="userbot/files/xp_startup.mp3")
+        await event.edit("`Okay, I'm done sleeping!`")
+        if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
+            try: await event.reply(file="userbot/files/xp_startup.mp3")
             except: pass # it be like that sometimes
     else:
-        await time.edit("**Syntax:** `.sleep [seconds]`")
+        await event.edit("**Syntax:** `.sleep [seconds]`")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}shutdown$")
 @errors_handler
 async def killdabot(event):
-    """ For .shutdown command, shut the bot down."""
+    # For .shutdown command, shut the bot down
     await event.edit("`Goodbye...`")
 
     if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
@@ -84,16 +84,16 @@ async def restartdabot(event):
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}support$")
 @errors_handler
-async def bot_support(wannahelp):
-    """ For .support command, just returns the group link. """
-    await wannahelp.edit("Link Portal: @userbot_support")
+async def bot_support(event):
+    # For .support command, just returns the group link
+    await event.edit("Link Portal: @userbot_support")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}repo$")
 @errors_handler
-async def repo_is_here(wannasee):
-    """ For .repo command, just returns the repo URL. """
-    await wannasee.edit("https://github.com/RaphielGang/Telegram-UserBot/")
+async def repo_is_here(event):
+    # For .repo command, just returns the repo URL
+    await event.edit("https://github.com/RaphielGang/Telegram-UserBot/")
 
 
 CMD_HELP.update({
@@ -101,24 +101,20 @@ CMD_HELP.update({
     ".random <item1> <item2> ... <itemN>"
     "\nUsage: Get a random item from the list of items."
 })
-
 CMD_HELP.update({
     'sleep':
     '.sleep 10'
     '\nUsage: Userbots get tired too. Let yours snooze for a few seconds.'
 })
-
 CMD_HELP.update({
     "shutdown":
     ".shutdown"
     '\nUsage: Sometimes you need to restart your bot. Sometimes you just hope to'
     "hear Windows XP shutdown sound... but you don't."
 })
-
 CMD_HELP.update(
     {'support': ".support"
      "\nUsage: If you need help, use this command."})
-
 CMD_HELP.update({
     'repo':
     '.repo'
