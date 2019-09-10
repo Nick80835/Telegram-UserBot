@@ -144,7 +144,7 @@ async def gdrive_upload(filename: str, filebuf: BytesIO = None) -> str:
     return reply
 
 
-@register(pattern=f"^{CMDPREFIX}mirror(?: |$)([\s\S]*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}mirror(?: |$)([\s\S]*)")
 @errors_handler
 async def gdrive_mirror(event):
     # Download a file and upload to Google Drive
@@ -181,7 +181,7 @@ async def gdrive_mirror(event):
     await event.edit(reply)
 
 
-@register(pattern=f"^{CMDPREFIX}drive(?: |$)(\S*.?\/*.?\.?[A-Za-z0-9]*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}drive(?: |$)(\S*.?\/*.?\.?[A-Za-z0-9]*)")
 @errors_handler
 async def gdrive(event):
     # Upload files from server to Google Drive
@@ -198,7 +198,7 @@ async def gdrive(event):
     await event.edit(reply)
 
 
-@register(pattern=f"^{CMDPREFIX}download(?: |$)(.*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}download(?: |$)(.*)")
 @errors_handler
 async def download(event):
     # For .download command, download files to the userbot's server
@@ -227,7 +227,7 @@ async def download(event):
             download to my local server.`\n")
 
 
-@register(pattern=f"^{CMDPREFIX}uploadir (.*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}uploadir (.*)")
 @errors_handler
 async def uploadir(event):
     # For .uploadir command, allows you to upload
@@ -303,7 +303,7 @@ async def uploadir(event):
         await event.edit("404: Directory Not Found")
 
 
-@register(pattern=f"^{CMDPREFIX}upload (.*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}upload (.*)")
 @errors_handler
 async def upload(event):
     # For .upload command, allows you to
@@ -388,7 +388,7 @@ def extract_w_h(file):
         return width, height
 
 
-@register(pattern=f"^{CMDPREFIX}uploadas(stream|vn|all) (.*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}uploadas(stream|vn|all) (.*)")
 @errors_handler
 async def uploadas(event):
     # For .uploadas command, allows you

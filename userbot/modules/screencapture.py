@@ -13,7 +13,7 @@ from userbot import SCREENSHOT_LAYER_ACCESS_KEY, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(pattern=f"^{CMDPREFIX}screencapture (.*)", outgoing=True)
+@register(outgoing=True, pattern=f"^{CMDPREFIX}screencapture (.*)")
 @errors_handler
 async def capture(event):
     """ For .screencapture command, capture a website and send the photo. """
