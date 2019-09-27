@@ -99,16 +99,10 @@ async def fetch_info(replied_user, event):
     is_bot = replied_user.user.bot
     restricted = replied_user.user.restricted
     verified = replied_user.user.verified
-    photo = await event.client.download_profile_photo(user_id,
-                                                      TMP_DOWNLOAD_DIRECTORY +
-                                                      str(user_id) + ".jpg",
-                                                      download_big=True)
-    first_name = first_name.replace(
-        "\u2060", "") if first_name else ("This User has no First Name")
-    last_name = last_name.replace(
-        "\u2060", "") if last_name else ("This User has no Last Name")
-    username = "@{}".format(username) if username else (
-        "This User has no Username")
+    photo = await event.client.download_profile_photo(user_id, TMP_DOWNLOAD_DIRECTORY + str(user_id) + ".jpg", download_big=True)
+    first_name = first_name.replace("\u2060", "") if first_name else ("This User has no First Name")
+    last_name = last_name.replace("\u2060", "") if last_name else ("This User has no Last Name")
+    username = "@{}".format(username) if username else ("This User has no Username")
     user_bio = "This User has no About" if not user_bio else user_bio
 
     caption = "<b>USER INFO:</b> \n"

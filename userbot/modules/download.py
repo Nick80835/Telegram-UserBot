@@ -15,11 +15,9 @@ from io import BytesIO
 from time import sleep
 from telethon.tl.types import DocumentAttributeVideo, MessageMediaPhoto
 from pyDownload import Downloader
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from userbot import LOGS, CMD_HELP, GDRIVE_FOLDER, CMDPREFIX
+from userbot import LOGS, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TMP_DOWNLOAD_DIRECTORY", "./")
@@ -83,119 +81,6 @@ async def download_from_tg(event) -> (str, BytesIO):
     duration = (end - start).seconds
     await event.edit(f"`Downloaded {filen} in {duration} seconds.`")
     return filen, buf
-
-
-async def gdrive_upload(filename: str, filebuf: BytesIO = None) -> str:
-    # Upload files to Google Drive using PyDrive
-    # a workaround for disabling cache errors
-    # https://github.com/googleapis/google-api-python-client/issues/299
-    logging.getLogger('googleapiclient.discovery_cache').setLevel(
-        logging.CRITICAL)
-
-    # Authenticate Google Drive automatically
-    # https://stackoverflow.com/a/24542604
-    gauth = GoogleAuth()
-    # Try to load saved client credentials
-    gauth.LoadCredentialsFile("secret.json")
-    if gauth.credentials is None:
-        return "nosecret"
-    if gauth.access_token_expired:
-        gauth.Refresh()
-    else:
-        # Initialize the saved credentials
-        gauth.Authorize()
-    # Save the current credentials to a file
-    gauth.SaveCredentialsFile("secret.json")
-    drive = GoogleDrive(gauth)
-
-    if filename.count('/') > 1:
-        filename = filename.split('/')[-1]
-    filedata = {
-        'title': filename,
-        "parents": [{
-            "kind": "drive#fileLink",
-            "id": GDRIVE_FOLDER
-        }]
-    }
-
-    if filebuf:
-        mime_type = mimetypes.guess_type(filename)
-        if mime_type[0] and mime_type[1]:
-            filedata['mimeType'] = f"{mime_type[0]}/{mime_type[1]}"
-        else:
-            filedata['mimeType'] = 'text/plain'
-        file = drive.CreateFile(filedata)
-        file.content = filebuf
-    else:
-        file = drive.CreateFile(filedata)
-        file.SetContentFile(filename)
-    name = filename.split('/')[-1]
-    file.Upload()
-    if not filebuf:
-        os.remove(filename)
-    # insert new permission
-    file.InsertPermission({
-        'type': 'anyone',
-        'value': 'anyone',
-        'role': 'reader'
-    })
-    reply = f"[{name}]({file['alternateLink']})\n" \
-        f"__Direct link:__ [Here]({file['downloadUrl']})"
-    return reply
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}mirror(?: |$)([\s\S]*)")
-@errors_handler
-async def gdrive_mirror(event):
-    # Download a file and upload to Google Drive
-    message = event.pattern_match.group(1)
-    if not event.reply_to_msg_id and not message:
-        await event.edit("`Usage: .mirror <url> <url>`")
-        return
-    reply = ''
-    reply_msg = await event.get_reply_message()
-    links = re.findall(r'\bhttps?://.*\.\S+', message)
-    if not (links or reply_msg or reply_msg.media
-            or reply_msg.media.document):
-        reply = "`No links or telegram files found!`\n"
-        await event.edit(reply)
-        return
-    if event.reply_to_msg_id:
-        await event.edit('`Downloading from Telegram...`')
-        filen, buf = await download_from_tg(event)
-        await event.edit(f'`Uploading {filen} to GDrive...`')
-        reply += await gdrive_upload(
-            filen, buf) if buf else await gdrive_upload(filen)
-    elif "|" in message:
-        url, file_name = message.split("|")
-        url = url.strip()
-        file_name = file_name.strip()
-        await event.edit(f'`Downloading {file_name}`')
-        status = await download_from_url(url, file_name)
-        await event.edit(status)
-        await event.edit(f'`Uploading {file_name} to GDrive...`')
-        reply += await gdrive_upload(file_name)
-    if "nosecret" in reply:
-        reply = "`Run the generate_drive_session.py file " \
-                "in your machine to authenticate on google drive!!`"
-    await event.edit(reply)
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}drive(?: |$)(\S*.?\/*.?\.?[A-Za-z0-9]*)")
-@errors_handler
-async def gdrive(event):
-    # Upload files from server to Google Drive
-    path = event.pattern_match.group(1)
-    if not path:
-        await event.edit("`Usage: .drive <file>`")
-        return
-    if not os.path.isfile(path):
-        await event.edit("`No such file!`\n")
-        return
-    file_name = path.split('/')[-1]
-    await event.edit(f'`Uploading {file_name} to GDrive...`')
-    reply = await gdrive_upload(path)
-    await event.edit(reply)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}download(?: |$)(.*)")

@@ -48,34 +48,6 @@ if version_info[0] < 3 or version_info[1] < 6:
 PM_AUTO_BAN = getbool("PM_AUTO_BAN", "False")
 WELCOME_MUTE = getbool("WELCOME_MUTE", "False")
 
-# Misc fancy integrations
-SCREENSHOT_LAYER_ACCESS_KEY = getstr("SCREENSHOT_LAYER_ACCESS_KEY", None)
-OPEN_WEATHER_MAP_APPID = getstr("OPEN_WEATHER_MAP_APPID", None)
-YOUTUBE_API_KEY = getstr("YOUTUBE_API_KEY", None)
-SPOTIFY_USERNAME = getstr("SPOTIFY_USERNAME", None)
-SPOTIFY_PASS = getstr("SPOTIFY_PASS", None)
-BIO_PREFIX = getstr("BIO_PREFIX", None)
-DEFAULT_BIO = getstr("DEFAULT_BIO", None)
-CURRENCY_API = getstr("CURRENCY_API", None)
-GDRIVE_FOLDER = getstr("GDRIVE_FOLDER", None)
-
-# LastFM integration variables
-LASTFM_API = getstr("LASTFM_API", None)
-LASTFM_SECRET = getstr("LASTFM_SECRET", None)
-LASTFM_USERNAME = getstr("LASTFM_USERNAME", None)
-LASTFM_PASSWORD_PLAIN = getstr("LASTFM_PASSWORD", None)
-LASTFM_PASS = pylast.md5(LASTFM_PASSWORD_PLAIN)
-
-if LASTFM_USERNAME != 'None':
-    lastfm = pylast.LastFMNetwork(
-        api_key=LASTFM_API,
-        api_secret=LASTFM_SECRET,
-        username=LASTFM_USERNAME,
-        password_hash=LASTFM_PASS
-    )
-else:
-    lastfm = None
-
 # pylint: disable=invalid-name
 bot = TelegramClient("userbot", API_KEY, API_HASH)
 

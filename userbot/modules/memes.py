@@ -75,9 +75,9 @@ RUNSREACTS = [
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}(\w+)say (.*)")
 @errors_handler
-async def univsaye(cowmsg): # For .cowsay module, userbot wrapper for cow which says things.
-    arg = cowmsg.pattern_match.group(1).lower()
-    text = cowmsg.pattern_match.group(2)
+async def univsaye(event): # For .cowsay module, userbot wrapper for cow which says things.
+    arg = event.pattern_match.group(1).lower()
+    text = event.pattern_match.group(2)
 
     if arg == "cow":
         arg = "default"
@@ -86,39 +86,39 @@ async def univsaye(cowmsg): # For .cowsay module, userbot wrapper for cow which 
     cheese = cow.get_cow(arg)
     cheese = cheese()
 
-    await cowmsg.edit(f"`{cheese.milk(text).replace('`', '´')}`")
+    await event.edit(f"`{cheese.milk(text).replace('`', '´')}`")
 
 
 @register(outgoing=True, pattern="^:/$")
 @errors_handler
-async def kek(keks): # Check yourself ;)
+async def kek(event): # Check yourself ;)
     uio = ["/", "\\"]
     for i in range(1, 15):
         time.sleep(0.3)
-        await keks.edit(":" + uio[i % 2])
+        await event.edit(":" + uio[i % 2])
 
 
 @register(outgoing=True, pattern="^-_-$")
 @errors_handler
-async def lol(lel): # Ok...
+async def lol(event): # Ok...
     okay = "-_-"
     for _ in range(10):
         okay = okay[:-1] + "_-"
-        await lel.edit(okay)
+        await event.edit(okay)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}cp(?: |$)(.*)")
 @errors_handler
-async def copypasta(cp_e): # Copypasta the famous meme
-    textx = await cp_e.get_reply_message()
-    message = cp_e.pattern_match.group(1)
+async def copypasta(event): # Copypasta the famous meme
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
 
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await cp_e.edit("`😂🅱️IvE👐sOME👅text👅 for✌️Me👌tO👐MAkE👀iT💞funNy!💦`")
+        await event.edit("`😂🅱️IvE👐sOME👅text👅 for✌️Me👌tO👐MAkE👀iT💞funNy!💦`")
         return
 
     reply_text = choice(EMOJIS)
@@ -138,21 +138,21 @@ async def copypasta(cp_e): # Copypasta the famous meme
             else:
                 reply_text += owo.lower()
     reply_text += choice(EMOJIS)
-    await cp_e.edit(reply_text)
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}vapor(?: |$)(.*)")
 @errors_handler
-async def vapor(vpr): # Vaporize everything!
+async def vapor(event): # Vaporize everything!
     reply_text = list()
-    textx = await vpr.get_reply_message()
-    message = vpr.pattern_match.group(1)
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await vpr.edit("`Ｇｉｖｅ ｓｏｍｅ ｔｅｘｔ ｆｏｒ ｖａｐｏｒ！`")
+        await event.edit("`Ｇｉｖｅ ｓｏｍｅ ｔｅｘｔ ｆｏｒ ｖａｐｏｒ！`")
         return
 
     for charac in message:
@@ -163,40 +163,40 @@ async def vapor(vpr): # Vaporize everything!
         else:
             reply_text.append(charac)
 
-    await vpr.edit("".join(reply_text))
+    await event.edit("".join(reply_text))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}str(?: |$)(.*)")
 @errors_handler
-async def stretch(stret): # Stretch it.
-    textx = await stret.get_reply_message()
-    message = stret.text
-    message = stret.pattern_match.group(1)
+async def stretch(event): # Stretch it.
+    textx = await event.get_reply_message()
+    message = event.text
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await stret.edit("`GiiiiiiiB sooooooomeeeeeee teeeeeeext!`")
+        await event.edit("`GiiiiiiiB sooooooomeeeeeee teeeeeeext!`")
         return
 
     reply_text = re.sub(r"([aeiouAEIOUａｅｉｏｕＡＥＩＯＵаеиоуюяыэё])",
                         (r"\1" * randint(3, 10)), message)
-    await stret.edit(reply_text)
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}zal(?: |$)(.*)")
 @errors_handler
-async def zal(zgfy): # Invoke the feeling of chaos.
+async def zal(event): # Invoke the feeling of chaos.
     reply_text = list()
-    textx = await zgfy.get_reply_message()
-    message = zgfy.pattern_match.group(1)
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await zgfy.edit(
+        await event.edit(
             "`gͫ ̆ i̛ ̺ v͇̆ ȅͅ   a̢ͦ   s̴̪ c̸̢ ä̸ rͩͣ y͖͞   t̨͚ é̠ x̢͖  t͔͛`"
         )
         return
@@ -212,26 +212,26 @@ async def zal(zgfy): # Invoke the feeling of chaos.
 
         reply_text.append(charac)
 
-    await zgfy.edit("".join(reply_text))
+    await event.edit("".join(reply_text))
 
 
 @register(outgoing=True, pattern="^hi$")
 @errors_handler
-async def hoi(hello): # Greet everyone!
-    await hello.edit("Hoi!😄")
+async def hoi(event): # Greet everyone!
+    await event.edit("Hoi!😄")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}owo(?: |$)(.*)")
 @errors_handler
-async def faces(owo): # UwU
-    textx = await owo.get_reply_message()
-    message = owo.pattern_match.group(1)
+async def faces(event): # UwU
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await owo.edit("` UwU no text given! `")
+        await event.edit("` UwU no text given! `")
         return
 
     reply_text = re.sub(r"(r|l)", "w", message)
@@ -241,47 +241,47 @@ async def faces(owo): # UwU
     reply_text = re.sub(r"\!+", " " + choice(UWUS), reply_text)
     reply_text = reply_text.replace("ove", "uv")
     reply_text += " " + choice(UWUS)
-    await owo.edit(reply_text)
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}react$")
 @errors_handler
-async def react_meme(react): # Make your userbot react to everything.
-    await react.edit(choice(FACEREACTS))
+async def react_meme(event): # Make your userbot react to everything.
+    await event.edit(choice(FACEREACTS))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}shg$")
 @errors_handler
-async def shrugger(shg): # ¯\_(ツ)_/¯
-    await shg.edit(r"¯\_(ツ)_/¯")
+async def shrugger(event): # ¯\_(ツ)_/¯
+    await event.edit(r"¯\_(ツ)_/¯")
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}runs$")
 @errors_handler
-async def runner_lol(run): # Run, run, RUNNN!
+async def runner_lol(event): # Run, run, RUNNN!
     index = randint(0, len(RUNSREACTS) - 1)
     reply_text = RUNSREACTS[index]
-    await run.edit(reply_text)
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}metoo$")
 @errors_handler
-async def metoo(hahayes): # Haha yes
-    await hahayes.edit(choice(METOOSTR))
+async def metoo(event): # Haha yes
+    await event.edit(choice(METOOSTR))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}mock(?: |$)(.*)")
 @errors_handler
-async def spongemocktext(mock): # Do it and find the real fun.
+async def spongemocktext(event): # Do it and find the real fun.
     reply_text = list()
-    textx = await mock.get_reply_message()
-    message = mock.pattern_match.group(1)
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await mock.edit("`gIvE sOMEtHInG tO MoCk!`")
+        await event.edit("`gIvE sOMEtHInG tO MoCk!`")
         return
 
     for charac in message:
@@ -291,59 +291,59 @@ async def spongemocktext(mock): # Do it and find the real fun.
         else:
             reply_text.append(charac)
 
-    await mock.edit("".join(reply_text))
+    await event.edit("".join(reply_text))
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}clap(?: |$)(.*)")
 @errors_handler
-async def claptext(memereview): # Praise people!
-    textx = await memereview.get_reply_message()
-    message = memereview.pattern_match.group(1)
+async def claptext(event): # Praise people!
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await memereview.edit("`Hah, I don't clap pointlessly!`")
+        await event.edit("`Hah, I don't clap pointlessly!`")
         return
     reply_text = "👏 "
     reply_text += message.replace(" ", " 👏 ")
     reply_text += " 👏"
-    await memereview.edit(reply_text)
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}bt$")
 @errors_handler
-async def bluetext(bt_e): # Believe me, you will find this useful.
-    if await bt_e.get_reply_message():
-        await bt_e.edit(
+async def bluetext(event): # Believe me, you will find this useful.
+    if await event.get_reply_message():
+        await event.edit(
             "`BLUETEXT MUST CLICK.`\n"
             "`Are you a stupid animal which is attracted to colours?`")
 
 
 @register(pattern=f'{CMDPREFIX}type(?: |$)(.*)')
 @errors_handler
-async def typewriter(typew): # Just a small command to make your keyboard become a typewriter!
-    textx = await typew.get_reply_message()
-    message = typew.pattern_match.group(1)
+async def typewriter(event): # Just a small command to make your keyboard become a typewriter!
+    textx = await event.get_reply_message()
+    message = event.pattern_match.group(1)
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await typew.edit("`Give a text to type!`")
+        await event.edit("`Give a text to type!`")
         return
     sleep_time = 0.03
     typing_symbol = "|"
     old_text = ''
-    await typew.edit(typing_symbol)
+    await event.edit(typing_symbol)
     await asyncio.sleep(sleep_time)
     for character in message:
         old_text = old_text + "" + character
         typing_text = old_text + "" + typing_symbol
-        await typew.edit(typing_text)
+        await event.edit(typing_text)
         await asyncio.sleep(sleep_time)
-        await typew.edit(old_text)
+        await event.edit(old_text)
         await asyncio.sleep(sleep_time)
 
 

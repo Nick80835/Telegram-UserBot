@@ -21,13 +21,23 @@ DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
 async def magisk(event):
     # for .magisk command, give links to the latest releases
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/master/'
+    urlCanary = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/'
+
     releases = 'Latest Magisk Releases:\n'
-    for variant in ['stable', 'beta', 'canary_builds/canary']:
+
+    for variant in ['stable', 'beta']: # stable and beta builds
         data = get(url + variant + '.json').json()
-        name = variant.split('_')[0].capitalize()
+        name = variant.title()
         releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
                     f'[Uninstaller]({data["uninstaller"]["link"]})\n'
+    for variant in ['release']: # canary builds
+        data = get(urlCanary + variant + '.json').json()
+        name = 'Canary'
+        releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
+                    f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
+                    f'[Uninstaller]({data["uninstaller"]["link"]})\n'
+
     await event.edit(releases)
 
 

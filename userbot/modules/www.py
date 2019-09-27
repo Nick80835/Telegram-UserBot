@@ -39,7 +39,7 @@ def speed_convert(size):
     # Hi human, you can't read bytes?
     power = 2**10
     zero = 0
-    units = {0: '', 1: 'Kb/s', 2: 'Mb/s', 3: 'Gb/s', 4: 'Tb/s'}
+    units = {0: '', 1: 'KiB/s', 2: 'MiB/s', 3: 'GiB/s', 4: 'TiB/s'}
     while size > power:
         size /= power
         zero += 1

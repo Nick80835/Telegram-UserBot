@@ -25,7 +25,7 @@ from requests import get
 from urbandict import define
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CURRENCY_API, bot, CMDPREFIX
+from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
 LANG = "en"
@@ -272,73 +272,6 @@ async def lang(event):
             BOTLOG_CHATID, "Default language changed to **" + LANG + "**")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}yt (.*)")
-@errors_handler
-async def yt_search(event):
-    # For .yt command, do a YouTube search from Telegram
-    query = event.pattern_match.group(1)
-    result = ''
-    i = 1
-
-    if not YOUTUBE_API_KEY:
-        await event.edit("`Error: YouTube API key missing!\
-            Add it to environment vars or config.env.`")
-        return
-
-    await event.edit("```Processing...```")
-
-    full_response = youtube_search(query)
-    videos_json = full_response[1]
-
-    for video in videos_json:
-        result += f"{i}. {unescape(video['snippet']['title'])} \
-\nhttps://www.youtube.com/watch?v={video['id']['videoId']}\n"
-
-        i += 1
-
-    reply_text = f"**Search Query:**\n`{query}`\n\n**Result:**\n{result}"
-
-    await event.edit(reply_text)
-
-
-def youtube_search(query,
-                order="relevance",
-                token=None,
-                location=None,
-                location_radius=None):
-    """ Do a YouTube search. """
-    youtube = build('youtube',
-                    'v3',
-                    developerKey=YOUTUBE_API_KEY,
-                    cache_discovery=False)
-    
-    # pylint: disable=no-member
-    search_response = youtube.search().list(
-        q=query,
-        type="video",
-        pageToken=token,
-        order=order,
-        part="id,snippet",
-        maxResults=10,
-        location=location,
-        locationRadius=location_radius).execute()
-
-    videos = []
-
-    for search_result in search_response.get("items", []):
-        if search_result["id"]["kind"] == "youtube#video":
-            videos.append(search_result)
-    try:
-        nexttok = search_response["nextPageToken"]
-        return (nexttok, videos)
-    except HttpError:
-        nexttok = "last_page"
-        return (nexttok, videos)
-    except KeyError:
-        nexttok = "KeyError, try again."
-        return (nexttok, videos)
-
-
 @register(outgoing=True, pattern=f"^{CMDPREFIX}yt_dl (\S*) ?(\S*)")
 @errors_handler
 async def download_video(event):
@@ -405,23 +338,6 @@ async def download_video(event):
     await event.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}cr (\S*) ?(\S*) ?(\S*)")
-@errors_handler
-async def currency(event):
-    # For .cr command, convert amount, from, to
-    amount = event.pattern_match.group(1)
-    currency_from = event.pattern_match.group(3).upper()
-    currency_to = event.pattern_match.group(2).upper()
-    data = get(
-        f"https://free.currconv.com/api/v7/convert?apiKey={CURRENCY_API}&q={currency_from}_{currency_to}&compact=ultra"
-    ).json()
-    result = data[f'{currency_from}_{currency_to}']
-    result = float(amount) / float(result)
-    result = round(result, 5)
-    await event.edit(
-        f"{amount} {currency_to} is:\n`{result} {currency_from}`")
-
-
 def deEmojify(inputString):
     # Remove emojis and other non-safe characters from string
     return get_emoji_regexp().sub(u'', inputString)
@@ -464,18 +380,9 @@ CMD_HELP.update({
     "TTS may not work."
 })
 CMD_HELP.update({
-    'yt': ".yt <search_query>"
-    "\nUsage: Does a YouTube search. "
-})
-CMD_HELP.update({
     'yt_dl':
     ".yt_dl <url> <quality>(optional)"
     "\nUsage: Download videos from YouTube. "
     "If no quality is specified, the highest downloadable quality is "
     "downloaded. Will send the link if the video is larger than 50 MB."
-})
-CMD_HELP.update({
-    'cr':
-    ".cr <from> <to>"
-    "\nUsage: Currency converter, converts <from> to <to>."
 })
