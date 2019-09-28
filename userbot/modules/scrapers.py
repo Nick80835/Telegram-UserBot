@@ -5,11 +5,10 @@
 #
 """ Userbot module containing various scrapers. """
 
-import os
+import os, aiohttp, re
 from asyncio import create_subprocess_shell as asyncsh
 from asyncio.subprocess import PIPE as asyncsh_PIPE
 from html import unescape
-from re import findall
 from urllib import parse
 from urllib.error import HTTPError
 from search_engine_parser import GoogleSearch
@@ -22,13 +21,14 @@ from gtts import gTTS
 from pytube import YouTube
 from pytube.helpers import safe_filename
 from requests import get
-from urbandict import define
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
 LANG = "en"
+UD_QUERY_URL = 'http://api.urbandictionary.com/v0/define'
+UD_RANDOM_URL = 'http://api.urbandictionary.com/v0/random'
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}img (.*)")
@@ -37,7 +37,7 @@ async def img_sampler(event):
     # For .img command, search and return images matching the query
     await event.edit("Processing...")
     query = event.pattern_match.group(1)
-    lim = findall(r"lim=\d+", query)
+    lim = re.findall(r"lim=\d+", query)
     try:
         lim = lim[0]
         lim = lim.replace("lim=", "")
@@ -70,7 +70,7 @@ async def img_sampler(event):
 async def gsearch(event):
     # For .google command, do a Google search
     match = event.pattern_match.group(1)
-    page = findall(r"page=\d+", match)
+    page = re.findall(r"page=\d+", match)
     try:
         page = page[0]
         page = page.replace("page=", "")
@@ -134,46 +134,65 @@ async def wiki(event):
             BOTLOG_CHATID, f"Wiki query {match} was executed successfully")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}ud (.*)")
+@register(outgoing=True, pattern=f"^{CMDPREFIX}ud\s?(.*)")
 @errors_handler
 async def urban_dict(event):
-    # For .ud command, fetch content from Urban Dictionary
-    await event.edit("Processing...")
-    query = event.pattern_match.group(1)
+    udquery = event.pattern_match.group(1)
+
     try:
-        define(query)
-    except HTTPError:
-        await event.edit(f"Sorry, couldn't find any results for: {query}")
-        return
-    mean = define(query)
-    deflen = sum(len(i) for i in mean[0]["def"])
-    exalen = sum(len(i) for i in mean[0]["example"])
-    meanlen = deflen + exalen
-    if int(meanlen) >= 0:
-        if int(meanlen) >= 4096:
-            await event.edit("`Output too large, sending as file.`")
-            file = open("output.txt", "w+")
-            file.write("Text: " + query + "\n\nMeaning: " +
-                        mean[0]["def"] + "\n\n" + "Example: \n" +
-                        mean[0]["example"])
-            file.close()
-            await event.client.send_file(
-                event.chat_id,
-                "output.txt",
-                caption="`Output was too large, sent it as a file.`")
-            if os.path.exists("output.txt"):
-                os.remove("output.txt")
-            await event.delete()
-            return
-        await event.edit("Text: **" + query + "**\n\nMeaning: **" +
-                        mean[0]["def"] + "**\n\n" + "Example: \n__" +
-                        mean[0]["example"] + "__")
-        if BOTLOG:
-            await event.client.send_message(
-                BOTLOG_CHATID,
-                "ud query " + query + " executed successfully.")
+        udquery
+    except:
+        udquery = None
+
+    if udquery:
+        params = {'term': udquery}
+        url = UD_QUERY_URL
     else:
-        await event.edit("No result found for **" + query + "**")
+        params = None
+        url = UD_RANDOM_URL
+
+    session = aiohttp.ClientSession()
+
+    async with session.get(url, params=params) as response:
+        if response.status == 200:
+            response = await response.json()
+        else:
+            response = response.status
+    
+    await session.close()
+
+    try:
+        response = response['list'][0]
+        wordinfo = [response['word'], response['definition']]
+        if response['example'] != '':
+            wordinfo.append(response['example'])
+    except NameError:
+        wordinfo = ["An error occurred, response code:", str(response)]
+    except IndexError:
+        wordinfo = ['No results for query', udquery]
+
+    definition = '**{0[0]}**: {0[1]}'.format(wordinfo)
+
+    try:
+        definition += '\n\n**Example**: {0[2]}'.format(wordinfo)
+    except IndexError:
+        pass
+
+    definition = re.sub(r'[[]', '', definition)
+    definition = re.sub(r'[]]', '', definition)
+
+    if len(definition) >= 4096:
+        await event.edit("`Output too large, sending as file.`")
+        file = open("output.txt", "w+")
+        file.write(definition)
+        file.close()
+        await event.client.send_file(event.chat_id, "output.txt",
+            caption="`Output was too large, sent it as a file.`")
+        if os.path.exists("output.txt"): os.remove("output.txt")
+        await event.delete()
+        return
+
+    await event.edit(definition)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}tts(?: |$)([\s\S]*)")

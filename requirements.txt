@@ -19,7 +19,6 @@ requests>=2.18.4
 speedtest-cli>=2.0.2
 telegraph
 telethon>=1.10.5
-urbandict>=0.5
 wikipedia>=1.4.0
 search-engine-parser
 dnspython
