@@ -95,26 +95,6 @@ async def delete_it(event):
                     BOTLOG_CHATID, "Well, I can't delete a message")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}editme")
-@errors_handler
-async def editer(event):
-    # For .editme command, edit your last message
-    message = event.text
-    chat = await event.get_input_chat()
-    self_id = await event.client.get_peer_id('me')
-    string = str(message[8:])
-    i = 1
-    async for message in event.client.iter_messages(chat, self_id):
-        if i == 2:
-            await message.edit(string)
-            await event.delete()
-            break
-        i = i + 1
-    if BOTLOG:
-        await event.client.send_message(
-            BOTLOG_CHATID, "Edit query was executed successfully")
-
-
 @register(outgoing=True, pattern=f"^{CMDPREFIX}sd")
 @errors_handler
 async def selfdestruct(event):
@@ -144,11 +124,6 @@ CMD_HELP.update({
 CMD_HELP.update({
     "del":
     ".del" "\nUsage: Delete the message you replied to."
-})
-CMD_HELP.update({
-    'editme':
-    ".editme <newmessage>"
-    "\nUsage: Edit the text you replied to with newtext."
 })
 CMD_HELP.update({
     'sd':

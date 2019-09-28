@@ -22,8 +22,6 @@ from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
 # =================== CONSTANT ===================
-PP_TOO_SMOL = "`The image is too small`"
-PP_ERROR = "`Failure while processing image`"
 NO_ADMIN = "`You aren't an admin!`"
 NO_PERM = "`You don't have sufficient permissions!`"
 
@@ -33,7 +31,7 @@ CHAT_PP_ERROR = "`Some issue with updating the pic,`" \
                 "`or don't have the desired rights.`"
 INVALID_MEDIA = "`Invalid Extension`"
 
-BANNED_RIGHTS = ChatBannedRights(
+banRights = ChatBannedRights(
     until_date=None,
     view_messages=True,
     send_messages=True,
@@ -45,8 +43,9 @@ BANNED_RIGHTS = ChatBannedRights(
     embed_links=True,
 )
 
-UNBAN_RIGHTS = ChatBannedRights(
+unBanRights = ChatBannedRights(
     until_date=None,
+    view_messages=None,
     send_messages=None,
     send_media=None,
     send_stickers=None,
@@ -56,43 +55,29 @@ UNBAN_RIGHTS = ChatBannedRights(
     embed_links=None,
 )
 
-KICK_RIGHTS = ChatBannedRights(until_date=None, view_messages=True)
-MUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=True)
-UNMUTE_RIGHTS = ChatBannedRights(until_date=None, send_messages=False)
+adminRights = ChatAdminRights(
+    add_admins=True,
+    invite_users=True,
+    change_info=True,
+    ban_users=True,
+    delete_messages=True,
+    pin_messages=True
+)
+
+unAdminRights = ChatAdminRights(
+    add_admins=None,
+    invite_users=None,
+    change_info=None,
+    ban_users=None,
+    delete_messages=None,
+    pin_messages=None
+)
+
+kickRights = ChatBannedRights(until_date=None, view_messages=True)
+muteRights = ChatBannedRights(until_date=None, send_messages=True)
+unMuteRights = ChatBannedRights(until_date=None, send_messages=False)
 
 # ================================================
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}setgrouppic$")
-@errors_handler
-async def set_group_photo(event):
-    # For .setgrouppic command, changes the picture of a group
-    replymsg = await event.get_reply_message()
-    chat = await event.get_chat()
-    photo = None
-
-    if not chat.admin_rights or chat.creator:
-        await event.edit(NO_ADMIN)
-        return
-
-    if replymsg and replymsg.media:
-        if isinstance(replymsg.media, MessageMediaPhoto):
-            photo = await bot.download_media(message=replymsg.photo)
-        elif "image" in replymsg.media.document.mime_type.split('/'):
-            photo = await bot.download_file(replymsg.media.document)
-        else:
-            await event.edit(INVALID_MEDIA)
-
-    if photo:
-        try:
-            await EditPhotoRequest(event.chat_id, await
-                                    bot.upload_file(photo))
-            await event.edit(CHAT_PP_CHANGED)
-
-        except PhotoCropSizeSmallError:
-            await event.edit(PP_TOO_SMOL)
-        except ImageProcessFailedError:
-            await event.edit(PP_ERROR)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}promote(?: |$)(.*)")
@@ -110,13 +95,6 @@ async def promote(event):
         await event.edit(NO_ADMIN)
         return
 
-    new_rights = ChatAdminRights(add_admins=True,
-                                    invite_users=True,
-                                    change_info=True,
-                                    ban_users=True,
-                                    delete_messages=True,
-                                    pin_messages=True)
-
     await event.edit("`Promoting...`")
 
     user = await get_user_from_event(event)
@@ -127,8 +105,7 @@ async def promote(event):
 
     # Try to promote if current user is admin or creator
     try:
-        await event.client(
-            EditAdminRequest(event.chat_id, user.id, new_rights))
+        await event.client(EditAdminRequest(event.chat_id, user.id, adminRights, None))
         await event.edit("`Promoted Successfully!`")
 
     # If Telethon spit BadRequestError, assume
@@ -167,24 +144,16 @@ async def demote(event):
     else:
         return
 
-    # New rights after demotion
-    newrights = ChatAdminRights(add_admins=None,
-                                invite_users=None,
-                                change_info=None,
-                                ban_users=None,
-                                delete_messages=None,
-                                pin_messages=None)
     # Edit Admin Permission
     try:
-        await event.client(
-            EditAdminRequest(event.chat_id, user.id, newrights))
+        await event.client(EditAdminRequest(event.chat_id, user.id, unAdminRights, None))
+        await event.edit("`Demoted Successfully!`")
 
     # If we catch BadRequestError from Telethon
     # Assume we don't have permission to demote
     except BadRequestError:
         await event.edit(NO_PERM)
         return
-    await event.edit("`Demoted Successfully!`")
 
     # Announce to the logging group if we have demoted successfully
     if BOTLOG:
@@ -219,7 +188,7 @@ async def ban(event):
 
     try:
         await event.client(
-            EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS))
+            EditBannedRequest(event.chat_id, user.id, banRights))
     except BadRequestError:
         await event.edit(NO_PERM)
         return
@@ -271,7 +240,7 @@ async def unban(event):
 
     try:
         await event.client(
-            EditBannedRequest(event.chat_id, user.id, UNBAN_RIGHTS))
+            EditBannedRequest(event.chat_id, user.id, unBanRights))
         await event.edit("`Unbanned Successfully`")
 
         if BOTLOG:
@@ -326,9 +295,7 @@ async def remove_deleted_accounts(event):
     async for user in event.client.iter_participants(event.chat_id):
         if user.deleted:
             try:
-                await event.client(
-                    EditBannedRequest(event.chat_id, user.id,
-                                        BANNED_RIGHTS))
+                await event.client(EditBannedRequest(event.chat_id, user.id, banRights))
             except ChatAdminRequiredError:
                 await event.edit("`You don't have enough rights.`")
                 return
@@ -336,7 +303,7 @@ async def remove_deleted_accounts(event):
                 del_u -= 1
                 del_a += 1
             await event.client(
-                EditBannedRequest(event.chat_id, user.id, UNBAN_RIGHTS))
+                EditBannedRequest(event.chat_id, user.id, unBanRights))
             del_u += 1
 
     if del_u > 0:
@@ -402,8 +369,7 @@ async def pin(event):
         is_silent = False
 
     try:
-        await event.client(
-            UpdatePinnedMessageRequest(event.to_id, to_pin, is_silent))
+        await event.client(UpdatePinnedMessageRequest(event.to_id, to_pin, is_silent))
     except BadRequestError:
         await event.edit(NO_PERM)
         return
@@ -443,14 +409,12 @@ async def kick(event):
 
     try:
         await event.client(
-            EditBannedRequest(event.chat_id, user.id, KICK_RIGHTS))
+            EditBannedRequest(event.chat_id, user.id, kickRights))
         await sleep(.5)
     except BadRequestError:
         await event.edit(NO_PERM)
         return
-    await event.client(
-        EditBannedRequest(event.chat_id, user.id,
-                            ChatBannedRights(until_date=None)))
+    await event.client(EditBannedRequest(event.chat_id, user.id, ChatBannedRights(until_date=None)))
 
     kmsg = "`Kicked` [{}](tg://user?id={})`!`"
     await event.edit(kmsg.format(user.first_name, user.id))
