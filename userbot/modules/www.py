@@ -30,7 +30,7 @@ async def speedtst(event):
         f"`Started at: {result['timestamp']}\n\n"
         f"Download: {speed_convert(result['download'])}\n"
         f"Upload: {speed_convert(result['upload'])}\n"
-        f"Ping: {result['ping']}ms\n"
+        f"Ping: {result['ping']} milliseconds\n"
         f"ISP: {result['client']['isp']}`"
     )
 
@@ -39,7 +39,7 @@ def speed_convert(size):
     # Hi human, you can't read bytes?
     power = 2**10
     zero = 0
-    units = {0: '', 1: 'KiB/s', 2: 'MiB/s', 3: 'GiB/s', 4: 'TiB/s'}
+    units = {0: '', 1: 'Kilobits/s', 2: 'Megabits/s', 3: 'Gigabits/s', 4: 'Terabits/s'}
     while size > power:
         size /= power
         zero += 1
