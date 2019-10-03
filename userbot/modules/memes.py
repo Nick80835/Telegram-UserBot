@@ -273,25 +273,33 @@ async def metoo(event): # Haha yes
 @register(outgoing=True, pattern=f"^{CMDPREFIX}mock(?: |$)(.*)")
 @errors_handler
 async def spongemocktext(event): # Do it and find the real fun.
-    reply_text = list()
     textx = await event.get_reply_message()
     message = event.pattern_match.group(1)
+    reply_text = ''
+
     if message:
-        pass
+        data = message
     elif textx:
-        message = textx.text
+        data = textx.text
     else:
-        await event.edit("`gIvE sOMEtHInG tO MoCk!`")
-        return
+        data = 'Haha yes, I know how to mock text.'
 
-    for charac in message:
-        if charac.isalpha() and randint(0, 1):
-            to_app = charac.upper() if charac.islower() else charac.lower()
-            reply_text.append(to_app)
+    for letter in data:
+        if len(reply_text) >= 2:
+            if reply_text[-1] + reply_text[-2] == reply_text[-1].lower() + reply_text[-2].lower():
+                reply_text += letter.upper()
+                continue
+            
+            if reply_text[-1] + reply_text[-2] == reply_text[-1].upper() + reply_text[-2].upper():
+                reply_text += letter.lower()
+                continue
+
+        if randint(1, 2) == randint(1, 2):
+            reply_text += letter.lower()
         else:
-            reply_text.append(charac)
+            reply_text += letter.upper()
 
-    await event.edit("".join(reply_text))
+    await event.edit(reply_text)
 
 
 @register(outgoing=True, pattern=f"^{CMDPREFIX}clap(?: |$)(.*)")
