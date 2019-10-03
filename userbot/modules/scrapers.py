@@ -35,7 +35,7 @@ UD_RANDOM_URL = 'http://api.urbandictionary.com/v0/random'
 @errors_handler
 async def img_sampler(event):
     # For .img command, search and return images matching the query
-    await event.edit("Processing...")
+    await event.edit("Processing…")
     query = event.pattern_match.group(1)
     lim = re.findall(r"lim=\d+", query)
     try:
@@ -298,7 +298,7 @@ async def download_video(event):
     url = event.pattern_match.group(1)
     quality = event.pattern_match.group(2)
 
-    await event.edit("**Fetching...**")
+    await event.edit("`Fetching…`")
 
     video = YouTube(url)
 
@@ -333,7 +333,7 @@ async def download_video(event):
                 f"Get the video [here]({video_stream.url})\n\n"
                 "**If the video plays instead of downloading, "
                 "right click(or long press on touchscreen) and "
-                "press 'Save Video As...'(may depend on the browser) "
+                "press 'Save Video As…'(may depend on the browser) "
                 "to download the video.**"))
         return
 

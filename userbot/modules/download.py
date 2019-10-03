@@ -89,13 +89,13 @@ async def download(event):
     # For .download command, download files to the userbot's server
     if event.fwd_from:
         return
-    await event.edit("Processing ...")
+    await event.edit("Processing…")
     input_str = event.pattern_match.group(1)
     reply_msg = await event.get_reply_message()
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
     if reply_msg and reply_msg.media:
-        await event.edit('`Downloading file from Telegram....`')
+        await event.edit('`Downloading file from Telegram…`')
         filen, buf = await download_from_tg(event)
         if buf:
             with open(filen, 'wb') as to_save:
@@ -122,7 +122,7 @@ async def uploadir(event):
     input_str = event.pattern_match.group(1)
     if os.path.exists(input_str):
         start = datetime.now()
-        await event.edit("Processing ...")
+        await event.edit("Processing…")
         lst_of_files = []
         for r, d, f in os.walk(input_str):
             for file in f:
@@ -201,8 +201,7 @@ async def upload(event):
     await event.edit("Processing ...")
     input_str = event.pattern_match.group(1)
     if input_str in ("userbot.session", "config.env"):
-        await event.edit("`That's a dangerous operation! Not Permitted!`"
-                            )
+        await event.edit("`That's a dangerous operation! Not Permitted!`")
         return
     if os.path.exists(input_str):
         start = datetime.now()

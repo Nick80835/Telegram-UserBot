@@ -230,7 +230,7 @@ async def unban(event):
         return
 
     # If everything goes well...
-    await event.edit("`Unbanning...`")
+    await event.edit("`Unbanning…`")
 
     user = await get_user_from_event(event)
     if user:
@@ -241,7 +241,7 @@ async def unban(event):
     try:
         await event.client(
             EditBannedRequest(event.chat_id, user.id, unBanRights))
-        await event.edit("`Unbanned Successfully`")
+        await event.edit("`Unbanned Successfully!`")
 
         if BOTLOG:
             await event.client.send_message(
@@ -265,7 +265,7 @@ async def remove_deleted_accounts(event):
         return
 
     if con != "clean":
-        await event.edit("`Searching for zombie accounts...`")
+        await event.edit("`Searching for zombie accounts…`")
         async for user in event.client.iter_participants(event.chat_id):
             if user.deleted:
                 del_u += 1
@@ -288,7 +288,7 @@ async def remove_deleted_accounts(event):
         await event.edit("`You aren't an admin here!`")
         return
 
-    await event.edit("`Cleaning deleted accounts...`")
+    await event.edit("`Cleaning deleted accounts…`")
     del_u = 0
     del_a = 0
 

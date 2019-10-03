@@ -32,7 +32,7 @@ async def paste(event):
         message = (await event.get_reply_message()).message
 
     # Dogbin
-    await event.edit("`Pasting text . . .`")
+    await event.edit("`Pasting text…`")
     resp = post(DOGBIN_URL + "documents", data=message.encode('utf-8'))
 
     if resp.status_code == 200:
@@ -66,7 +66,7 @@ async def get_dogbin_content(event):
     # fetches the content of a dogbin URL.
     textx = await event.get_reply_message()
     message = event.pattern_match.group(1)
-    await event.edit("`Getting dogbin content . . .`")
+    await event.edit("`Getting dogbin content…`")
 
     if textx:
         message = str(textx.message)

@@ -37,7 +37,7 @@ async def generate_changelog(local_head, local_remote_diff):
 @errors_handler
 async def upstream(event):
     # For the update command, checkout the latest revision on the remote
-    await event.edit("`Checking for updates, please wait...`")
+    await event.edit("`Checking for updates, please wait…`")
     flag = event.pattern_match.group(1)
 
     update_error_template = "`The updater cannot continue due to an "

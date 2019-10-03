@@ -17,7 +17,7 @@ from userbot.events import register, errors_handler
 @errors_handler
 async def speedtst(event):
     # For the speed command, use SpeedTest to check server speeds.
-    await event.edit("`Running speed test...`")
+    await event.edit("`Running speed test…`")
     test = Speedtest()
 
     test.get_best_server()

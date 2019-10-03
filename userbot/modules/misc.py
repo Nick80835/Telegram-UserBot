@@ -33,7 +33,7 @@ async def sleepybot(event):
     # For .sleep command, let the userbot snooze for a few second.
     if len(event.pattern_match.group().split()) > 1:
         counter = int(event.pattern_match.group().split()[1])
-        await event.edit("`I'm sulking and snoozing...`")
+        await event.edit("`I'm sulking and snoozing…`")
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
@@ -52,7 +52,7 @@ async def sleepybot(event):
 @errors_handler
 async def killdabot(event):
     # For .shutdown command, shut the bot down
-    await event.edit("`Goodbye...`")
+    await event.edit("`Goodbye…`")
 
     if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
         try: await event.reply(file="userbot/files/xp_shutdown.mp3")
@@ -70,8 +70,7 @@ async def killdabot(event):
 @register(outgoing=True, pattern=f"^{CMDPREFIX}restart$")
 @errors_handler
 async def restartdabot(event):
-    await event.edit("`Hold tight! I just need a second to be back up....`"
-                        )
+    await event.edit("`Restarting bot…`")
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#RESTART \n"
                                         "Bot Restarted")
@@ -98,7 +97,7 @@ async def repo_is_here(event):
 
 CMD_HELP.update({
     'random':
-    ".random <item1> <item2> ... <itemN>"
+    ".random <item1> <item2> … <itemN>"
     "\nUsage: Get a random item from the list of items."
 })
 CMD_HELP.update({
@@ -110,7 +109,7 @@ CMD_HELP.update({
     "shutdown":
     ".shutdown"
     '\nUsage: Sometimes you need to restart your bot. Sometimes you just hope to'
-    "hear Windows XP shutdown sound... but you don't."
+    "hear Windows XP shutting down…"
 })
 CMD_HELP.update(
     {'support': ".support"

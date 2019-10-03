@@ -27,7 +27,7 @@ async def kang(event):
     emojibypass = False
     is_anim = False
     emoji = ""
-    await event.edit("`Kanging..........`")
+    await event.edit("`Kanging…`")
     if message and message.media:
         if isinstance(message.media, MessageMediaPhoto):
             photo = io.BytesIO()

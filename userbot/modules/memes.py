@@ -231,7 +231,7 @@ async def faces(event): # UwU
     elif textx:
         message = textx.text
     else:
-        await event.edit("` UwU no text given! `")
+        await event.edit("`UwU no text given!`")
         return
 
     reply_text = re.sub(r"(r|l)", "w", message)

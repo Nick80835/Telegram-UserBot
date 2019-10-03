@@ -83,7 +83,7 @@ async def pipcheck(event):
     # For .pip command, do a pip search
     pipmodule = event.pattern_match.group(1)
     if pipmodule:
-        await event.edit("`Searching . . .`")
+        await event.edit("`Searching…`")
         invokepip = f"pip3 search {pipmodule}"
         pipc = await asyncrunapp(
             invokepip,
