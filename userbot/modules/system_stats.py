@@ -11,7 +11,7 @@ from os import remove
 from platform import python_version, uname
 from shutil import which
 from telethon import version
-from userbot import CMD_HELP, CMDPREFIX
+from userbot import CMD_HELP
 from userbot.events import register, errors_handler
 
 # ================= CONSTANT =================

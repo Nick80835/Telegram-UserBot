@@ -9,7 +9,7 @@
 from speedtest import Speedtest
 from datetime import datetime
 from telethon import functions
-from userbot import CMD_HELP, CMDPREFIX
+from userbot import CMD_HELP
 from userbot.events import register, errors_handler
 
 

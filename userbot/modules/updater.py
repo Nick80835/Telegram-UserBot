@@ -15,7 +15,7 @@ from git.exc import (
     CheckoutError
 )
 from os import remove, execl, path
-from userbot import CMD_HELP, CMDPREFIX, LOGS
+from userbot import CMD_HELP, LOGS
 from userbot.events import register, errors_handler
 
 upstream_repo = 'https://github.com/Nick80835/Telegram-UserBot.git'

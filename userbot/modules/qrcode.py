@@ -11,7 +11,7 @@ import os
 from asyncio import sleep
 from datetime import datetime
 from requests import post, get
-from userbot import CMD_HELP, CMDPREFIX
+from userbot import CMD_HELP
 from userbot.events import register, errors_handler
 
 

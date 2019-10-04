@@ -10,7 +10,7 @@ import sys
 from random import randint, choice
 from time import sleep
 from os import execl
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, CMDPREFIX
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register, errors_handler
 
 

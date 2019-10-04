@@ -8,7 +8,7 @@
 import re
 from requests import get
 from bs4 import BeautifulSoup
-from userbot import CMD_HELP, CMDPREFIX
+from userbot import CMD_HELP
 from userbot.events import register, errors_handler
 
 GITHUB = 'https://github.com'

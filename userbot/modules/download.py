@@ -17,7 +17,7 @@ from telethon.tl.types import DocumentAttributeVideo, MessageMediaPhoto
 from pyDownload import Downloader
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from userbot import LOGS, CMD_HELP, CMDPREFIX
+from userbot import LOGS, CMD_HELP
 from userbot.events import register, errors_handler
 
 TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TMP_DOWNLOAD_DIRECTORY", "./")

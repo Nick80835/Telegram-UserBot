@@ -9,7 +9,7 @@
 import asyncio, re, time
 from cowpy import cow
 from random import randint, choice, getrandbits
-from userbot import CMD_HELP, ZALG_LIST, CMDPREFIX
+from userbot import CMD_HELP, ZALG_LIST
 from userbot.events import register, errors_handler
 
 METOOSTR = [

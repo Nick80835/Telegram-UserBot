@@ -8,7 +8,7 @@
 import io, urllib.request, math
 from PIL import Image
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
-from userbot import bot, CMD_HELP, CMDPREFIX
+from userbot import bot, CMD_HELP
 from userbot.events import register, errors_handler
 
 PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \

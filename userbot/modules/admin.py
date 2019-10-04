@@ -18,7 +18,7 @@ from telethon.tl.functions.messages import UpdatePinnedMessageRequest
 from telethon.tl.types import (ChannelParticipantsAdmins, ChatAdminRights,
                                ChatBannedRights, MessageEntityMentionName,
                                MessageMediaPhoto)
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
+from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
 from userbot.events import register, errors_handler
 
 # =================== CONSTANT ===================

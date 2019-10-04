@@ -7,7 +7,7 @@
     for interacting with dogbin(https://del.dog)"""
 
 from requests import get, post, exceptions
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, CMDPREFIX
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import register, errors_handler
 
 DOGBIN_URL = "https://del.dog/"

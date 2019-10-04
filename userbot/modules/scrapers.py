@@ -23,7 +23,7 @@ from pytube.helpers import safe_filename
 from requests import get
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
+from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
 from userbot.events import register, errors_handler
 
 LANG = "en"
