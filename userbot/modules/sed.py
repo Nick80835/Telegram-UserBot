@@ -17,10 +17,10 @@ DELIMITERS = ("/", ":", "|", "_")
 
 def separate_sed(sed_string):
     # Separate sed arguments
-    if (len(sed_string) > 3 and sed_string[3] in DELIMITERS
-            and sed_string.count(sed_string[3]) >= 2):
-        delim = sed_string[3]
-        start = counter = 4
+    if (len(sed_string) > 1 and sed_string[0] in DELIMITERS
+            and sed_string.count(sed_string[0]) >= 2):
+        delim = sed_string[0]
+        start = counter = 1
         while counter < len(sed_string):
             if sed_string[counter] == "\\":
                 counter += 1
@@ -57,11 +57,11 @@ def separate_sed(sed_string):
     return None
 
 
-@register(outgoing=True, pattern="sed")
+@register(outgoing=True, pattern="^sed(.*)", custom_regex=True)
 @errors_handler
 async def sed(event):
     # For sed command, use sed on Telegram
-    sed_result = separate_sed(event.text)
+    sed_result = separate_sed(event.pattern_match.group(1))
     textx = await event.get_reply_message()
     if sed_result:
         if textx:

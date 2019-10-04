@@ -89,6 +89,24 @@ async def univsaye(event): # For .cowsay module, userbot wrapper for cow which s
     await event.edit(f"`{cheese.milk(text).replace('`', '´')}`")
 
 
+@register(outgoing=True, pattern="^:/$", custom_regex=True)
+@errors_handler
+async def kek(event): # Check yourself ;)
+    uio = ["/", "\\"]
+    for i in range(1, 15):
+        time.sleep(0.3)
+        await event.edit(":" + uio[i % 2])
+
+
+@register(outgoing=True, pattern="^-_-$", custom_regex=True)
+@errors_handler
+async def lol(event): # Ok...
+    okay = "-_-"
+    for _ in range(10):
+        okay = okay[:-1] + "_-"
+        await event.edit(okay)
+
+
 @register(outgoing=True, pattern="cp")
 @errors_handler
 async def copypasta(event): # Copypasta the famous meme
@@ -195,6 +213,12 @@ async def zal(event): # Invoke the feeling of chaos.
         reply_text.append(charac)
 
     await event.edit("".join(reply_text))
+
+
+@register(outgoing=True, pattern="^hi$", custom_regex=True)
+@errors_handler
+async def hoi(event): # Greet everyone!
+    await event.edit("Hoi!😄")
 
 
 @register(outgoing=True, pattern="owo")

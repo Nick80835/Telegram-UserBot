@@ -18,7 +18,14 @@ def register(**args):
     allow_edit = args.get('allow_edit', False)
 
     if args.get('pattern', None) is not None:
-        args['pattern'] = f"(?i)(?s)^{CMDPREFIX}{args['pattern']}(?: |$)(.*)"
+        if not args.get('custom_regex', False):
+            args['pattern'] = f"(?i)(?s)^{CMDPREFIX}{args['pattern']}(?: |$)(.*)"
+        else:
+            args['pattern'] = f"(?i)(?s){args['pattern']}"
+
+    for i in ['custom_regex', 'allow_edit']:
+        if i in args:
+            del args[i]
 
     def decorator(func):
         if allow_edit:
