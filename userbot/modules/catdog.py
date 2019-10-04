@@ -13,113 +13,112 @@ CAT_URL = 'http://api.thecatapi.com/v1/images/search'
 DOG_URL = 'http://api.thedogapi.com/v1/images/search'
 CAT_API_KEY = 'e5a56813-be40-481c-9c8a-a6585c37c1fe'
 DOG_API_KEY = '105555df-5c50-40fe-bd59-d15a17ce1c2e'
+CAT_HEADERS = {"x-api-key": CAT_API_KEY}
+DOG_HEADERS = {"x-api-key": DOG_API_KEY}
+IMGPARAM = {"mime_types": "jpg,png"}
+GIFPARAM = {"mime_types": "gif"}
 
 
-class catapi():
-    def __init__(self, type):
-        headers = {"x-api-key": CAT_API_KEY}
-        self.params = {"mime_types": type}
-        self.session = aiohttp.ClientSession(headers=headers)
+async def nekoAtsume(params):
+    session = aiohttp.ClientSession(headers=CAT_HEADERS)
 
-    async def _get(self):
-        async with self.session.get(CAT_URL, params=self.params) as response:
-            if response.status == 200:
-                response = await response.json()
-            else:
-                raise Exception
+    async with session.get(CAT_URL, params=params) as response:
+        if response.status == 200:
+            neko = await response.json()
+        else:
+            neko = response.status
 
-        return response
+    await session.close()
+    return neko
 
-    async def getcat(self):
-        cat = await self._get()
-        return cat
+async def inuAtsume(params):
+    session = aiohttp.ClientSession(headers=DOG_HEADERS)
 
-    async def close(self):
-        await self.session.close()
+    async with session.get(DOG_URL, params=params) as response:
+        if response.status == 200:
+            inu = await response.json()
+        else:
+            inu = response.status
 
-
-class dogapi():
-    def __init__(self, type):
-        headers = {"x-api-key": DOG_API_KEY}
-        self.params = {"mime_types": type}
-        self.session = aiohttp.ClientSession(headers=headers)
-
-    async def _get(self):
-        async with self.session.get(DOG_URL, params=self.params) as response:
-            if response.status == 200:
-                response = await response.json()
-            else:
-                raise Exception
-
-        return response
-
-    async def getdog(self):
-        dog = await self._get()
-        return dog
-
-    async def close(self):
-        await self.session.close()
-
-
-async def nekoatsume(type):
-    cathouse = catapi(type)
-    cat = await cathouse.getcat()
-    await cathouse.close()
-    return cat
-
-
-async def inuatsume(type):
-    doghouse = dogapi(type)
-    dog = await doghouse.getdog()
-    await doghouse.close()
-    return dog
+    await session.close()
+    return inu
 
 
 @register(outgoing=True, pattern="cat")
 @errors_handler
 async def cat(event):
-    cat = await nekoatsume("jpg,png")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), cat[0]["url"])
+    neko = await nekoAtsume(IMGPARAM)
+
+    if type(neko) == int:
+        await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), neko[0]["url"])
     await event.delete()
 
 
 @register(outgoing=True, pattern="cathd")
 @errors_handler
 async def cathd(event):
-    cat = await nekoatsume("jpg,png")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), cat[0]["url"], force_document=True)
+    neko = await nekoAtsume(IMGPARAM)
+
+    if type(neko) == int:
+        await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), neko[0]["url"], force_document=True)
     await event.delete()
 
 
 @register(outgoing=True, pattern="catgif")
 @errors_handler
 async def catgif(event):
-    cat = await nekoatsume("gif")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), cat[0]["url"])
+    neko = await nekoAtsume(GIFPARAM)
+
+    if type(neko) == int:
+        await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), neko[0]["url"])
     await event.delete()
 
 
 @register(outgoing=True, pattern="dog")
 @errors_handler
 async def dog(event):
-    dog = await inuatsume("jpg,png")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), dog[0]["url"])
+    inu = await inuAtsume(IMGPARAM)
+
+    if type(inu) == int:
+        await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), inu[0]["url"])
     await event.delete()
 
 
 @register(outgoing=True, pattern="doghd")
 @errors_handler
 async def doghd(event):
-    dog = await inuatsume("jpg,png")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), dog[0]["url"], force_document=True)
+    inu = await inuAtsume(IMGPARAM)
+
+    if type(inu) == int:
+        await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), inu[0]["url"], force_document=True)
     await event.delete()
 
 
 @register(outgoing=True, pattern="doggif")
 @errors_handler
 async def doggif(event):
-    dog = await inuatsume("gif")
-    await event.client.send_file(await event.client.get_input_entity(event.chat_id), dog[0]["url"])
+    inu = await inuAtsume(GIFPARAM)
+
+    if type(inu) == int:
+        await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), inu[0]["url"])
     await event.delete()
 
 
