@@ -73,7 +73,7 @@ RUNSREACTS = [
 ]
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}(\w+)say (.*)")
+@register(outgoing=True, pattern="(\w+)say")
 @errors_handler
 async def univsaye(event): # For .cowsay module, userbot wrapper for cow which says things.
     arg = event.pattern_match.group(1).lower()
@@ -89,25 +89,7 @@ async def univsaye(event): # For .cowsay module, userbot wrapper for cow which s
     await event.edit(f"`{cheese.milk(text).replace('`', '´')}`")
 
 
-@register(outgoing=True, pattern="^:/$")
-@errors_handler
-async def kek(event): # Check yourself ;)
-    uio = ["/", "\\"]
-    for i in range(1, 15):
-        time.sleep(0.3)
-        await event.edit(":" + uio[i % 2])
-
-
-@register(outgoing=True, pattern="^-_-$")
-@errors_handler
-async def lol(event): # Ok...
-    okay = "-_-"
-    for _ in range(10):
-        okay = okay[:-1] + "_-"
-        await event.edit(okay)
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}cp(?: |$)(.*)")
+@register(outgoing=True, pattern="cp")
 @errors_handler
 async def copypasta(event): # Copypasta the famous meme
     textx = await event.get_reply_message()
@@ -141,7 +123,7 @@ async def copypasta(event): # Copypasta the famous meme
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}vapor(?: |$)(.*)")
+@register(outgoing=True, pattern="vapor")
 @errors_handler
 async def vapor(event): # Vaporize everything!
     reply_text = list()
@@ -166,7 +148,7 @@ async def vapor(event): # Vaporize everything!
     await event.edit("".join(reply_text))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}str(?: |$)(.*)")
+@register(outgoing=True, pattern="str")
 @errors_handler
 async def stretch(event): # Stretch it.
     textx = await event.get_reply_message()
@@ -185,7 +167,7 @@ async def stretch(event): # Stretch it.
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}zal(?: |$)(.*)")
+@register(outgoing=True, pattern="zal")
 @errors_handler
 async def zal(event): # Invoke the feeling of chaos.
     reply_text = list()
@@ -215,13 +197,7 @@ async def zal(event): # Invoke the feeling of chaos.
     await event.edit("".join(reply_text))
 
 
-@register(outgoing=True, pattern="^hi$")
-@errors_handler
-async def hoi(event): # Greet everyone!
-    await event.edit("Hoi!😄")
-
-
-@register(outgoing=True, pattern=f"^{CMDPREFIX}owo(?: |$)(.*)")
+@register(outgoing=True, pattern="owo")
 @errors_handler
 async def faces(event): # UwU
     textx = await event.get_reply_message()
@@ -244,19 +220,19 @@ async def faces(event): # UwU
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}react$")
+@register(outgoing=True, pattern="react")
 @errors_handler
 async def react_meme(event): # Make your userbot react to everything.
     await event.edit(choice(FACEREACTS))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}shg$")
+@register(outgoing=True, pattern="shg")
 @errors_handler
 async def shrugger(event): # ¯\_(ツ)_/¯
     await event.edit(r"¯\_(ツ)_/¯")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}runs$")
+@register(outgoing=True, pattern="runs")
 @errors_handler
 async def runner_lol(event): # Run, run, RUNNN!
     index = randint(0, len(RUNSREACTS) - 1)
@@ -264,13 +240,13 @@ async def runner_lol(event): # Run, run, RUNNN!
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}metoo$")
+@register(outgoing=True, pattern="metoo")
 @errors_handler
 async def metoo(event): # Haha yes
     await event.edit(choice(METOOSTR))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}mock(?: |$)(.*)")
+@register(outgoing=True, pattern="mock")
 @errors_handler
 async def spongemocktext(event): # Do it and find the real fun.
     textx = await event.get_reply_message()
@@ -302,7 +278,7 @@ async def spongemocktext(event): # Do it and find the real fun.
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}clap(?: |$)(.*)")
+@register(outgoing=True, pattern="clap")
 @errors_handler
 async def claptext(event): # Praise people!
     textx = await event.get_reply_message()
@@ -320,7 +296,7 @@ async def claptext(event): # Praise people!
     await event.edit(reply_text)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}bt$")
+@register(outgoing=True, pattern="bt")
 @errors_handler
 async def bluetext(event): # Believe me, you will find this useful.
     if await event.get_reply_message():
@@ -329,7 +305,7 @@ async def bluetext(event): # Believe me, you will find this useful.
             "`Are you a stupid animal which is attracted to colours?`")
 
 
-@register(pattern=f'{CMDPREFIX}type(?: |$)(.*)')
+@register(pattern='type')
 @errors_handler
 async def typewriter(event): # Just a small command to make your keyboard become a typewriter!
     textx = await event.get_reply_message()

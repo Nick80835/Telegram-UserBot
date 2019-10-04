@@ -83,7 +83,7 @@ async def download_from_tg(event) -> (str, BytesIO):
     return filen, buf
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}download(?: |$)(.*)")
+@register(outgoing=True, pattern="download")
 @errors_handler
 async def download(event):
     # For .download command, download files to the userbot's server
@@ -112,7 +112,7 @@ async def download(event):
             download to my local server.`\n")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}uploadir (.*)")
+@register(outgoing=True, pattern="uploadir")
 @errors_handler
 async def uploadir(event):
     # For .uploadir command, allows you to upload
@@ -188,7 +188,7 @@ async def uploadir(event):
         await event.edit("404: Directory Not Found")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}upload (.*)")
+@register(outgoing=True, pattern="upload")
 @errors_handler
 async def upload(event):
     # For .upload command, allows you to
@@ -272,7 +272,7 @@ def extract_w_h(file):
         return width, height
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}uploadas(stream|vn|all) (.*)")
+@register(outgoing=True, pattern=f"uploadas(stream|vn|all)")
 @errors_handler
 async def uploadas(event):
     # For .uploadas command, allows you

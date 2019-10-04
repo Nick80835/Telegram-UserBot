@@ -13,18 +13,18 @@ from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}eval(?: |$)(.*)")
+@register(outgoing=True, pattern="eval")
 @errors_handler
 async def evaluate(event):
     # For .eval command, evaluates the given Python expression.
     if event.is_channel and not event.is_group:
-        await event.edit("`Eval isn't permitted on channels`")
+        await event.edit("`Eval isn't permitted on channels!`")
         return
 
     if event.pattern_match.group(1):
         expression = event.pattern_match.group(1)
     else:
-        await event.edit("``` Give an expression to evaluate. ```")
+        await event.edit("`Give an expression to evaluate!`")
         return
 
     if expression in ("userbot.session", "config.env"):
@@ -43,7 +43,7 @@ async def evaluate(event):
                         event.chat_id,
                         "output.txt",
                         reply_to=event.id,
-                        caption="`Output too large, sending as file`",
+                        caption="`Output too large, sending as file…`",
                     )
                     remove("output.txt")
                     return
@@ -68,7 +68,7 @@ async def evaluate(event):
             f"Eval query {expression} was executed successfully")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}exec(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="exec")
 @errors_handler
 async def run(event):
     # For .exec command, which executes the dynamically created program
@@ -134,7 +134,7 @@ execute. Use .help exec for an example.`")
             "Exec query " + codepre + " was executed successfully")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}term(?: |$)(.*)")
+@register(outgoing=True, pattern="term")
 @errors_handler
 async def terminal_runner(event):
     # For .event command, runs bash commands and scripts on your server.

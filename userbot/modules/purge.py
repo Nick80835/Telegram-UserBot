@@ -13,7 +13,7 @@ from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}purge$")
+@register(outgoing=True, pattern="purge")
 @errors_handler
 async def fastpurger(event):
     # For .purge command, purge all messages starting from the reply
@@ -47,7 +47,7 @@ async def fastpurger(event):
     await done.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}purgeme")
+@register(outgoing=True, pattern="purgeme")
 @errors_handler
 async def purgeme(event):
     # For .purgeme, delete x count of your latest message
@@ -77,7 +77,7 @@ async def purgeme(event):
     await smsg.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}del$")
+@register(outgoing=True, pattern="del")
 @errors_handler
 async def delete_it(event):
     # For .del command, delete the replied message
@@ -95,13 +95,16 @@ async def delete_it(event):
                     BOTLOG_CHATID, "Well, I can't delete a message")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}sd")
+@register(outgoing=True, pattern="sd")
 @errors_handler
 async def selfdestruct(event):
     # For .sd command, make seflf-destructable messages
-    message = event.text
-    counter = int(message[4:6])
-    text = str(event.text[6:])
+    try:
+        counter = int(event.pattern_match.group().split()[1])
+        text = str(' '.join(event.pattern_match.group().split()[2:]))
+    except:
+        await event.edit("**Syntax:** `.sd <seconds> <message>`")
+        return
     await event.delete()
     smsg = await event.client.send_message(event.chat_id, text)
     await sleep(counter)

@@ -15,7 +15,7 @@ PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break
 A pack can't have more than 120 stickers at the moment."
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}kang")
+@register(outgoing=True, pattern="kang")
 @errors_handler
 async def kang(event):
     # For .kang command, kangs stickers or creates new ones.

@@ -19,7 +19,7 @@ DEFAULTUSER = uname().node
 # ============================================
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}sysd$")
+@register(outgoing=True, pattern="sysd")
 @errors_handler
 async def sysdetails(event):
     # For .sysd command, get system info using neofetch
@@ -40,7 +40,7 @@ async def sysdetails(event):
         await event.edit("`Hella install neofetch first kthx`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}botver$")
+@register(outgoing=True, pattern="botver")
 @errors_handler
 async def bot_ver(event):
     # For .botver command, get the bot version
@@ -77,7 +77,7 @@ async def bot_ver(event):
             "Shame that you don't have git, You're running r4.0 anyway")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}pip(?: |$)(.*)")
+@register(outgoing=True, pattern="pip")
 @errors_handler
 async def pipcheck(event):
     # For .pip command, do a pip search
@@ -121,7 +121,7 @@ async def pipcheck(event):
         await event.edit("`Use .help pip to see an example`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}alive$")
+@register(outgoing=True, pattern="alive")
 @errors_handler
 async def amireallyalive(event):
     await event.edit("`"
@@ -132,7 +132,7 @@ async def amireallyalive(event):
         "`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}aliveu")
+@register(outgoing=True, pattern="aliveu")
 @errors_handler
 async def amireallyaliveuser(event):
     # For .aliveu command, change the username in the .alive command
@@ -146,7 +146,7 @@ async def amireallyaliveuser(event):
     await event.edit("`" f"{output}" "`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}resetalive$")
+@register(outgoing=True, pattern="resetalive")
 @errors_handler
 async def amireallyalivereset(event):
     # For .resetalive command, reset the username in the .alive command

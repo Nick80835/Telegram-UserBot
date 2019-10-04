@@ -21,7 +21,7 @@ def progress(current, total):
                                                      (current / total) * 100))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}getqr$")
+@register(outgoing=True, pattern="getqr")
 @errors_handler
 async def parseqr(event):
     # For .getqr command, get QR Code content from the replied photo
@@ -43,7 +43,7 @@ async def parseqr(event):
         duration, qr_contents))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}makeqr(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="makeqr")
 @errors_handler
 async def make_qr(event):
     # For .makeqr command, make a QR Code containing the given content

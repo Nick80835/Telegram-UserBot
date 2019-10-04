@@ -10,7 +10,7 @@ from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}userid$")
+@register(outgoing=True, pattern="userid")
 @errors_handler
 async def useridgetter(target):
     # For .userid command, returns the ID of the target user
@@ -33,14 +33,14 @@ async def useridgetter(target):
             name, user_id))
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}chatid$")
+@register(outgoing=True, pattern="chatid")
 @errors_handler
 async def chatidgetter(chat):
     """ For .chatid, returns the ID of the chat you are in at that moment. """
     await chat.edit("Chat ID: `" + str(chat.chat_id) + "`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}log(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="log")
 @errors_handler
 async def log(log_text):
     """ For .log command, forwards a message
@@ -64,7 +64,7 @@ async def log(log_text):
     await log_text.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}kickme$")
+@register(outgoing=True, pattern="kickme")
 @errors_handler
 async def kickme(leave):
     """ Basically it's .kickme command """

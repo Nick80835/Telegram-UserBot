@@ -14,7 +14,7 @@ from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}direct(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="direct")
 @errors_handler
 async def direct_link_generator(event):
     # direct links generator

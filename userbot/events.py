@@ -8,24 +8,20 @@
 
 import math, subprocess, sys, traceback, datetime, asyncio
 from telethon import events
-from userbot import bot
+from userbot import bot, CMDPREFIX
 from traceback import format_exc
 from time import gmtime, strftime
 
 
 def register(**args):
     # Register a new event
-    pattern = args.get('pattern', None)
-    disable_edited = args.get('disable_edited', False)
+    allow_edit = args.get('allow_edit', False)
 
-    if pattern is not None and not pattern.startswith('(?i)'):
-        args['pattern'] = '(?i)' + pattern
-
-    if "disable_edited" in args:
-        del args['disable_edited']
+    if args.get('pattern', None) is not None:
+        args['pattern'] = f"(?i)(?s)^{CMDPREFIX}{args['pattern']}(?: |$)(.*)"
 
     def decorator(func):
-        if not disable_edited:
+        if allow_edit:
             bot.add_event_handler(func, events.MessageEdited(**args))
         bot.add_event_handler(func, events.NewMessage(**args))
 

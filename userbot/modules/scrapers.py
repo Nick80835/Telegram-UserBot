@@ -31,7 +31,7 @@ UD_QUERY_URL = 'http://api.urbandictionary.com/v0/define'
 UD_RANDOM_URL = 'http://api.urbandictionary.com/v0/random'
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}img (.*)")
+@register(outgoing=True, pattern="img")
 @errors_handler
 async def img_sampler(event):
     # For .img command, search and return images matching the query
@@ -65,7 +65,7 @@ async def img_sampler(event):
     await event.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}google (.*)")
+@register(outgoing=True, pattern="google")
 @errors_handler
 async def gsearch(event):
     # For .google command, do a Google search
@@ -100,7 +100,7 @@ async def gsearch(event):
         )
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}wiki (.*)")
+@register(outgoing=True, pattern="wiki")
 @errors_handler
 async def wiki(event):
     # For .google command, fetch content from Wikipedia
@@ -134,7 +134,7 @@ async def wiki(event):
             BOTLOG_CHATID, f"Wiki query {match} was executed successfully")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}ud\s?(.*)")
+@register(outgoing=True, pattern="ud")
 @errors_handler
 async def urban_dict(event):
     udquery = event.pattern_match.group(1)
@@ -195,7 +195,7 @@ async def urban_dict(event):
     await event.edit(definition)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}tts(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="tts")
 @errors_handler
 async def text_to_speech(event):
     # For .tts command, a wrapper for Google Text-to-Speech
@@ -243,7 +243,7 @@ async def text_to_speech(event):
         await event.delete()
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}trt(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="trt")
 @errors_handler
 async def translateme(event):
     # For .trt command, translate the given text using Google Translate
@@ -279,7 +279,7 @@ async def translateme(event):
         )
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}lang (.*)")
+@register(outgoing=True, pattern="lang")
 @errors_handler
 async def lang(event):
     # For .lang command, change the default langauge of userbot scrapers
@@ -291,7 +291,7 @@ async def lang(event):
             BOTLOG_CHATID, "Default language changed to **" + LANG + "**")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}yt_dl (\S*) ?(\S*)")
+@register(outgoing=True, pattern="yt_dl")
 @errors_handler
 async def download_video(event):
     # For .yt_dl command, download videos from YouTube

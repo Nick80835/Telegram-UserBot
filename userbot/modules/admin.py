@@ -80,7 +80,7 @@ unMuteRights = ChatBannedRights(until_date=None, send_messages=False)
 # ================================================
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}promote(?: |$)(.*)")
+@register(outgoing=True, pattern="promote")
 @errors_handler
 async def promote(event):
     # For .promote command, promote targeted person
@@ -95,7 +95,7 @@ async def promote(event):
         await event.edit(NO_ADMIN)
         return
 
-    await event.edit("`Promoting...`")
+    await event.edit("`Promoting…`")
 
     user = await get_user_from_event(event)
     if user:
@@ -122,7 +122,7 @@ async def promote(event):
             f"CHAT: {event.chat.title}(`{event.chat_id}`)")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}demote(?: |$)(.*)")
+@register(outgoing=True, pattern="demote")
 @errors_handler
 async def demote(event):
     # For .demote command, demote targeted person
@@ -136,7 +136,7 @@ async def demote(event):
         return
 
     # If passing, declare that we're going to demote
-    await event.edit("`Demoting...`")
+    await event.edit("`Demoting…`")
 
     user = await get_user_from_event(event)
     if user:
@@ -163,7 +163,7 @@ async def demote(event):
             f"CHAT: {event.chat.title}(`{event.chat_id}`)")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}ban(?: |$)(.*)")
+@register(outgoing=True, pattern="ban")
 @errors_handler
 async def ban(event):
     # For .ban command, ban targeted person
@@ -215,7 +215,7 @@ async def ban(event):
             f"CHAT: {event.chat.title}(`{event.chat_id}`)")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}unban(?: |$)(.*)")
+@register(outgoing=True, pattern="unban")
 @errors_handler
 async def unban(event):
     # For .unban command, unban targeted person
@@ -252,7 +252,7 @@ async def unban(event):
         await event.edit("`Uh oh my unban logic broke!`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}delusers(?: |$)(.*)")
+@register(outgoing=True, pattern="delusers")
 @errors_handler
 async def remove_deleted_accounts(event):
     # For .delusers command, remove deleted accounts from chat
@@ -316,7 +316,7 @@ async def remove_deleted_accounts(event):
     await event.edit(del_status)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}adminlist$")
+@register(outgoing=True, pattern="adminlist")
 @errors_handler
 async def list_admins(event):
     # For .adminlist command, list all of the admins of the chat
@@ -341,7 +341,7 @@ async def list_admins(event):
     await event.edit(mentions, parse_mode="html")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}pin(?: |$)(.*)")
+@register(outgoing=True, pattern="pin")
 @errors_handler
 async def pin(event):
     # for .pin command, pin a message in the chat
@@ -386,7 +386,7 @@ async def pin(event):
             f"LOUD: {not is_silent}")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}kick(?: |$)(.*)")
+@register(outgoing=True, pattern="kick")
 @errors_handler
 async def kick(event):
     # For .kick command, kick someone from the chat
@@ -405,7 +405,7 @@ async def kick(event):
         await event.edit("`Couldn't fetch user.`")
         return
 
-    await event.edit("`Kicking...`")
+    await event.edit("`Kicking…`")
 
     try:
         await event.client(

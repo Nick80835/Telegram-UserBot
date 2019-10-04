@@ -9,7 +9,7 @@ from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}help(?: |$)(.*)")
+@register(outgoing=True, pattern="help")
 @errors_handler
 async def help(event):
     # For .help command

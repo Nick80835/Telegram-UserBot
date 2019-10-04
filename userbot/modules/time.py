@@ -45,7 +45,7 @@ async def get_tz(con):
         return
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}time(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
+@register(outgoing=True, pattern="time")
 @errors_handler
 async def time_func(event):
     # For .time command, return the time of
@@ -102,7 +102,7 @@ async def time_func(event):
         f"`It's`  **{dtnow}**  `in {c_name}({time_zone} timezone).`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}date(?: |$)(.*)(?<![0-9])(?: |$)([0-9]+)?")
+@register(outgoing=True, pattern="date")
 @errors_handler
 async def date_func(event):
     # For .date command, return the date of

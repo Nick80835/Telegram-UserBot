@@ -13,7 +13,7 @@ from userbot.events import register, errors_handler
 DOGBIN_URL = "https://del.dog/"
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}paste(?: |$)([\s\S]*)")
+@register(outgoing=True, pattern="paste")
 @errors_handler
 async def paste(event):
     # For .paste command, allows using
@@ -59,7 +59,7 @@ async def paste(event):
         )
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}get_dogbin_content(?: |$)(.*)")
+@register(outgoing=True, pattern="get_dogbin_content")
 @errors_handler
 async def get_dogbin_content(event):
     # For .get_dogbin_content command,
@@ -121,8 +121,4 @@ CMD_HELP.update({
 CMD_HELP.update({
     "get_dogbin_content":
     "Get the content of a paste or shortened url from dogbin (https://del.dog/)"
-})
-CMD_HELP.update({
-    "pastestats":
-    "Get stats of a paste or shortened url from dogbin (https://del.dog/)"
 })

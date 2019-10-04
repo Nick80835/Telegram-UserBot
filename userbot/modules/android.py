@@ -16,7 +16,7 @@ DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
                'certified-android-devices/master/devices.json'
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}magisk$")
+@register(outgoing=True, pattern="magisk")
 @errors_handler
 async def magisk(event):
     # for .magisk command, give links to the latest releases
@@ -41,7 +41,7 @@ async def magisk(event):
     await event.edit(releases)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}device(?: |)(.*)")
+@register(outgoing=True, pattern="device")
 @errors_handler
 async def device_info(event):
     # for .device command, search for a device based on name, codename, model
@@ -76,13 +76,17 @@ async def device_info(event):
     await event.edit(reply)
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}specs(?: |)([\S]*)(?: |)([\s\S]*)")
+@register(outgoing=True, pattern="specs")
 @errors_handler
 async def devices_specifications(event):
     # for .specs command, list the specs for a given device
     textx = await event.get_reply_message()
-    brand = event.pattern_match.group(1).lower()
-    device = event.pattern_match.group(2).lower()
+    try:
+        brand = event.pattern_match.groups()[0].split()[0].lower()
+        device = ' '.join(event.pattern_match.groups()[0].split()[1:]).lower()
+    except:
+        brand = None
+        device = None
     if brand and device:
         pass
     elif textx:
@@ -135,7 +139,7 @@ async def devices_specifications(event):
         await event.edit(f"`Spec search failed for query: {brand} {device}`")
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}twrp(?: |$)(\S*)")
+@register(outgoing=True, pattern="twrp")
 @errors_handler
 async def twrp(event):
     # for .twrp command, get a link to twrp for a given device

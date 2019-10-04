@@ -33,7 +33,7 @@ async def generate_changelog(local_head, local_remote_diff):
     return changelog
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}update(?: |$)(.*)")
+@register(outgoing=True, pattern="update")
 @errors_handler
 async def upstream(event):
     # For the update command, checkout the latest revision on the remote
@@ -93,7 +93,7 @@ async def upstream(event):
             remove("changelog.txt")
         return
     else: # Changes found and the user said update now, continue
-        await event.edit('`Updating to the latest revision...`')
+        await event.edit('`Updating to the latest revision…`')
 
     try: # Reset to the latest remote branch locally
         repo.git.reset('--hard', 'FETCH_HEAD')
@@ -105,12 +105,14 @@ async def upstream(event):
         return
 
     await event.edit('`Successfully updated to latest bot revision!\n'
-                    'The bot will not pass go, will not collect $200, and will not automatically restart...`')
+                    'The bot will pass go, will collect $200, and will automagically restart…`')
 
     try: await event.client.disconnect()
     except: pass # we dont care
-
-    gc.collect()
+    # Spin a new instance of bot
+    execl(sys.executable, sys.executable, *sys.argv)
+    # Shut the existing one down
+    exit()
 
 
 CMD_HELP.update({

@@ -17,7 +17,7 @@ from userbot.events import register, errors_handler
 TMP_DOWNLOAD_DIRECTORY = "./"
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}whois(?: |$)(.*)")
+@register(outgoing=True, pattern="whois")
 @errors_handler
 async def who(event):
     # For .whois command, get info about a user

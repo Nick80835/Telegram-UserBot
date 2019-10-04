@@ -13,7 +13,7 @@ from userbot import CMD_HELP, CMDPREFIX
 from userbot.events import register, errors_handler
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}speed$")
+@register(outgoing=True, pattern="speed")
 @errors_handler
 async def speedtst(event):
     # For the speed command, use SpeedTest to check server speeds.
@@ -46,7 +46,7 @@ def speed_convert(size):
     return f"{round(size, 2)} {units[zero]}"
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}nearestdc$")
+@register(outgoing=True, pattern="nearestdc")
 @errors_handler
 async def neardc(event):
     # For the nearestdc command, get the nearest datacenter information.
@@ -59,7 +59,7 @@ async def neardc(event):
     )
 
 
-@register(outgoing=True, pattern=f"^{CMDPREFIX}ping$")
+@register(outgoing=True, pattern="ping")
 @errors_handler
 async def pingme(event):
     # For the pingme command, ping the userbot from any chat.
