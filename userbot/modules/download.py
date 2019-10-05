@@ -9,16 +9,21 @@
 """ Userbot module which contains everything related to
     downloading/uploading from/to the server. """
 
-import json, os, logging, mimetypes, re, subprocess, psutil
+import json
+import os
+import subprocess
 from datetime import datetime
 from io import BytesIO
 from time import sleep
-from telethon.tl.types import DocumentAttributeVideo, MessageMediaPhoto
-from pyDownload import Downloader
+
+import psutil
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from userbot import LOGS, CMD_HELP
-from userbot.events import register, errors_handler
+from pyDownload import Downloader
+from telethon.tl.types import DocumentAttributeVideo, MessageMediaPhoto
+
+from userbot import CMD_HELP, LOGS
+from userbot.events import errors_handler, register
 
 TEMP_DOWNLOAD_DIRECTORY = os.environ.get("TMP_DOWNLOAD_DIRECTORY", "./")
 
@@ -359,8 +364,7 @@ async def uploadas(event):
             end = datetime.now()
             duration = (end - start).seconds
             os.remove(thumb)
-            await event.edit("Uploaded in {} seconds.".format(duration)
-                                    )
+            await event.edit(f"Uploaded in {duration} seconds.")
         except FileNotFoundError as err:
             await event.edit(str(err))
     else:

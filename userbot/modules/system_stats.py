@@ -10,9 +10,11 @@ from asyncio.subprocess import PIPE as asyncPIPE
 from os import remove
 from platform import python_version, uname
 from shutil import which
+
 from telethon import version
+
 from userbot import CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 # ================= CONSTANT =================
 DEFAULTUSER = uname().node
@@ -66,12 +68,12 @@ async def bot_ver(event):
             + str(stderr.decode().strip())
 
         await event.edit("`Userbot Version: "
-                            f"{verout}"
-                            "` \n"
-                            "`Revision: "
-                            f"{revout}"
-                            "` \n"
-                            "`Tagged Version: r4.0`")
+                         f"{verout}"
+                         "` \n"
+                         "`Revision: "
+                         f"{revout}"
+                         "` \n"
+                         "`Tagged Version: r4.0`")
     else:
         await event.edit(
             "Shame that you don't have git, You're running r4.0 anyway")
@@ -109,14 +111,14 @@ async def pipcheck(event):
                 remove("output.txt")
                 return
             await event.edit("**Query: **\n`"
-                            f"{invokepip}"
-                            "`\n**Result: **\n`"
-                            f"{pipout}"
-                            "`")
+                             f"{invokepip}"
+                             "`\n**Result: **\n`"
+                             f"{pipout}"
+                             "`")
         else:
             await event.edit("**Query: **\n`"
-                            f"{invokepip}"
-                            "`\n**Result: **\n`No Result Returned/False`")
+                             f"{invokepip}"
+                             "`\n**Result: **\n`No Result Returned/False`")
     else:
         await event.edit("`Use .help pip to see an example`")
 
@@ -125,11 +127,11 @@ async def pipcheck(event):
 @errors_handler
 async def amireallyalive(event):
     await event.edit("`"
-        "Your bot is running \n\n"
-        f"Telethon version: {version.__version__} \n"
-        f"Python: {python_version()} \n"
-        f"User: {DEFAULTUSER}"
-        "`")
+                     "Your bot is running \n\n"
+                     f"Telethon version: {version.__version__} \n"
+                     f"Python: {python_version()} \n"
+                     f"User: {DEFAULTUSER}"
+                     "`")
 
 
 @register(outgoing=True, pattern="aliveu")

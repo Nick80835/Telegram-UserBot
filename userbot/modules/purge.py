@@ -10,7 +10,7 @@ from asyncio import sleep
 from telethon.errors import rpcbaseerrors
 
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="purge")
@@ -110,8 +110,7 @@ async def selfdestruct(event):
     await sleep(counter)
     await smsg.delete()
     if BOTLOG:
-        await event.client.send_message(BOTLOG_CHATID,
-                                            "sd query done successfully")
+        await event.client.send_message(BOTLOG_CHATID, "sd query done successfully")
 
 
 CMD_HELP.update({

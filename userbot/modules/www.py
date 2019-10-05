@@ -6,11 +6,13 @@
 """ Userbot module containing commands related to the \
     Information Superhighway(yes, Internet). """
 
-from speedtest import Speedtest
 from datetime import datetime
+
+from speedtest import Speedtest
 from telethon import functions
+
 from userbot import CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="speed")

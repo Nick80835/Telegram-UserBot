@@ -5,11 +5,15 @@
 #
 """ Userbot module for kanging stickers or making new ones. """
 
-import io, urllib.request, math
+import io
+import math
+import urllib.request
+
 from PIL import Image
 from telethon.tl.types import DocumentAttributeFilename, MessageMediaPhoto
-from userbot import bot, CMD_HELP
-from userbot.events import register, errors_handler
+
+from userbot import CMD_HELP, bot
+from userbot.events import errors_handler, register
 
 PACK_FULL = "Whoa! That's probably enough stickers for one pack, give it a break. \
 A pack can't have more than 120 stickers at the moment."
@@ -40,7 +44,7 @@ async def kang(event):
                 emoji = message.media.document.attributes[1].alt
                 emojibypass = True
         elif (DocumentAttributeFilename(file_name='AnimatedSticker.tgs') in
-                message.media.document.attributes):
+              message.media.document.attributes):
             emoji = message.media.document.attributes[0].alt
             emojibypass = True
             is_anim = True
@@ -95,16 +99,16 @@ async def kang(event):
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
                 await conv.send_message(packname)
-                x = await conv.get_response()
-                while x.text == PACK_FULL:
+                xtext = await conv.get_response()
+                while xtext.text == PACK_FULL:
                     pack += 1
                     packname = f"a{user.id}_by_{user.username}_{pack}"
                     packnick = f"@{user.username}'s userbot pack {pack}"
                     await event.edit("`Switching to Pack " + str(pack) +
-                                    " due to insufficient space`")
+                                     " due to insufficient space`")
                     await conv.send_message(packname)
-                    x = await conv.get_response()
-                    if x.text == "Invalid pack selected.":
+                    xtext = await conv.get_response()
+                    if xtext.text == "Invalid pack selected.":
                         await conv.send_message(cmd)
                         await conv.get_response()
                         # Ensure user doesn't get spamming notifications
@@ -146,8 +150,7 @@ async def kang(event):
                             parse_mode='md')
                         return
                 if is_anim:
-                    await bot.forward_messages('Stickers', [message.id],
-                                                event.chat_id)
+                    await bot.forward_messages('Stickers', [message.id], event.chat_id)
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)
@@ -161,8 +164,7 @@ async def kang(event):
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
         else:
-            await event.edit("Userbot sticker pack \
-doesn't exist! Making a new one!")
+            await event.edit("Userbot sticker pack doesn't exist! Making a new one!")
             async with bot.conversation('Stickers') as conv:
                 await conv.send_message(cmd)
                 await conv.get_response()
@@ -173,8 +175,7 @@ doesn't exist! Making a new one!")
                 # Ensure user doesn't get spamming notifications
                 await bot.send_read_acknowledge(conv.chat_id)
                 if is_anim:
-                    await bot.forward_messages('Stickers', [message.id],
-                                                event.chat_id)
+                    await bot.forward_messages('Stickers', [message.id], event.chat_id)
                 else:
                     file.seek(0)
                     await conv.send_file(file, force_document=True)

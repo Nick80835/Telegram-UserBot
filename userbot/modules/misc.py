@@ -7,11 +7,12 @@
 """ Userbot module for other small commands. """
 
 import sys
-from random import randint, choice
-from time import sleep
 from os import execl
+from random import choice, randint
+from time import sleep
+
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="random")
@@ -42,8 +43,10 @@ async def sleepybot(event):
         sleep(counter)
         await event.edit("`Okay, I'm done sleeping!`")
         if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
-            try: await event.reply(file="userbot/files/xp_startup.mp3")
-            except: pass # it be like that sometimes
+            try:
+                await event.reply(file="userbot/files/xp_startup.mp3")
+            except:
+                pass # it be like that sometimes
     else:
         await event.edit("**Syntax:** `.sleep <number of seconds>`")
 
@@ -55,14 +58,18 @@ async def killdabot(event):
     await event.edit("`Goodbye…`")
 
     if randint(0, 4) == 1 and not event.chat.default_banned_rights.send_media:
-        try: await event.reply(file="userbot/files/xp_shutdown.mp3")
-        except: pass # it be like that sometimes
+        try:
+            await event.reply(file="userbot/files/xp_shutdown.mp3")
+        except:
+            pass # it be like that sometimes
 
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#SHUTDOWN\nBot shut down")
 
-    try: await event.client.disconnect()
-    except: pass # just shut up
+    try:
+        await event.client.disconnect()
+    except:
+        pass # just shut up
     exit(0)
 
 

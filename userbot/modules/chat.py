@@ -5,9 +5,11 @@
 """ Userbot module containing userid, chatid and log commands"""
 
 from time import sleep
+
 from telethon.tl.functions.channels import LeaveChannelRequest
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
-from userbot.events import register, errors_handler
+
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="userid")
@@ -72,13 +74,21 @@ async def kickme(leave):
     await bot(LeaveChannelRequest(leave.chat_id))
 
 
-CMD_HELP.update({"chatid": "Fetch the current chat's ID"})
+CMD_HELP.update({
+    "chatid":
+    "Fetch the current chat's ID"
+})
 CMD_HELP.update({
     "userid":
     "Fetch the ID of the user in reply or the "
     "original author of a forwarded message."
 })
-CMD_HELP.update(
-    {"log": "Forward the message you've replied to to your "
-     "botlog group."})
-CMD_HELP.update({"kickme": "Leave from a targeted group."})
+CMD_HELP.update({
+    "log":
+    "Forward the message you've replied to to your "
+    "botlog group."
+})
+CMD_HELP.update({
+    "kickme":
+    "Leave from a targeted group."
+})

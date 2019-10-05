@@ -7,8 +7,10 @@
 
 from importlib import import_module
 from sys import argv
+
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
-from userbot import LOGS, bot, CMDPREFIX
+
+from userbot import LOGS, bot
 from userbot.modules import ALL_MODULES
 
 INVALID_PH = '\nERROR: The Phone No. entered is INVALID' \
@@ -24,7 +26,7 @@ except PhoneNumberInvalidError:
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)
 
-LOGS.info(f"Your Bot is alive! Test it by typing .alive on any chat."
+LOGS.info("Your Bot is alive! Test it by typing .alive on any chat."
           " Should you need assistance, head to https://t.me/userbot_support")
 LOGS.info("Your Bot Version is 4.0")
 

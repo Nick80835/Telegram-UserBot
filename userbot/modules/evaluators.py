@@ -9,8 +9,9 @@ import asyncio
 from getpass import getuser
 from os import remove
 from sys import executable
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID
-from userbot.events import register, errors_handler
+
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="eval")
@@ -48,19 +49,19 @@ async def evaluate(event):
                     remove("output.txt")
                     return
                 await event.edit("**Query: **\n`"
-                                    f"{expression}"
-                                    "`\n**Result: **\n`"
-                                    f"{evaluation}"
-                                    "`")
+                                 f"{expression}"
+                                 "`\n**Result: **\n`"
+                                 f"{evaluation}"
+                                 "`")
         else:
             await event.edit("**Query: **\n`"
-                                f"{expression}"
-                                "`\n**Result: **\n`No Result Returned/False`")
+                             f"{expression}"
+                             "`\n**Result: **\n`No Result Returned/False`")
     except Exception as err:
         await event.edit("**Query: **\n`"
-                            f"{expression}"
-                            "`\n**Exception: **\n"
-                            f"`{err}`")
+                         f"{expression}"
+                         "`\n**Exception: **\n"
+                         f"`{err}`")
 
     if BOTLOG:
         await event.client.send_message(
@@ -79,8 +80,7 @@ async def run(event):
         return
 
     if not code:
-        await event.edit("`At least a variable is required to \
-execute. Use .help exec for an example.`")
+        await event.edit("`At least a variable is required to execute. Use .help exec for an example.`")
         return
 
     if code in ("userbot.session", "config.env"):
@@ -118,20 +118,12 @@ execute. Use .help exec for an example.`")
             )
             remove("output.txt")
             return
-        await event.edit("**Query: **\n`"
-                            f"{codepre}"
-                            "`\n**Result: **\n`"
-                            f"{result}"
-                            "`")
+        await event.edit(f"**Query:**\n`{codepre}`\n**Result:**\n`{result}`")
     else:
-        await event.edit("**Query: **\n`"
-                            f"{codepre}"
-                            "`\n**Result: **\n`No Result Returned/False`")
+        await event.edit(f"**Query:**\n`{codepre}`\n**Result:**\n`No Result Returned/False`")
 
     if BOTLOG:
-        await event.client.send_message(
-            BOTLOG_CHATID,
-            "Exec query " + codepre + " was executed successfully")
+        await event.client.send_message(BOTLOG_CHATID, f"Exec query {codepre} was executed successfully")
 
 
 @register(outgoing=True, pattern="term")
@@ -181,9 +173,9 @@ async def terminal_runner(event):
         return
 
     if uid == 0:
-        await event.edit("`" f"{curruser}:~# {command}" f"\n{result}" "`")
+        await event.edit(f"`{curruser}:~# {command}\n{result}`")
     else:
-        await event.edit("`" f"{curruser}:~$ {command}" f"\n{result}" "`")
+        await event.edit(f"`{curruser}:~$ {command}\n{result}`")
 
     if BOTLOG:
         await event.client.send_message(

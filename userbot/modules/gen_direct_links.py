@@ -5,13 +5,18 @@
 #
 """ Userbot module containing various sites direct links generators"""
 
-import requests, re, urllib.parse, json
+import json
+import re
+import urllib.parse
 from os import popen
 from random import choice
+
+import requests
 from bs4 import BeautifulSoup
 from humanize import naturalsize
+
 from userbot import CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="direct")
@@ -55,7 +60,7 @@ async def direct_link_generator(event):
             reply += androidfilehost(link)
         else:
             reply += '`' + re.findall(r"\bhttps?://(.*?[^/]+)",
-                                        link)[0] + 'is not supported`\n'
+                                      link)[0] + 'is not supported`\n'
     await event.edit(reply)
 
 

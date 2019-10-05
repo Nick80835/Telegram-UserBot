@@ -5,12 +5,15 @@
 #
 """ Userbot initialization. """
 
-import os, pylast, re
+import os
+import re
 from distutils.util import strtobool as sb
+from logging import DEBUG, INFO, basicConfig, getLogger
+from sys import executable, version_info
+
+import pylast
 from dotenv import load_dotenv
-from logging import basicConfig, getLogger, INFO, DEBUG
 from requests import get
-from sys import version_info, executable
 from telethon import TelegramClient
 
 getstr = lambda varname, default: os.environ.get(varname, default)

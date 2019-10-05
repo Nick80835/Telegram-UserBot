@@ -6,28 +6,26 @@
 
 # This module updates the userbot based on Upstream revision
 
-import sys, os, gc
+import sys
+from os import execl, remove
+
 from git import Repo
 from git.exc import (
-    NoSuchPathError,
-    GitCommandError,
-    InvalidGitRepositoryError,
-    CheckoutError
-)
-from os import remove, execl, path
-from userbot import CMD_HELP, LOGS
-from userbot.events import register, errors_handler
+    CheckoutError, GitCommandError, InvalidGitRepositoryError, NoSuchPathError)
 
-upstream_repo = 'https://github.com/Nick80835/Telegram-UserBot.git'
-valid_branches = ['staging-nodb']
-commit_date_format = "%d/%m/%y"
+from userbot import CMD_HELP
+from userbot.events import errors_handler, register
+
+UPSTREAM_REPO = 'https://github.com/Nick80835/Telegram-UserBot.git'
+VALID_BRANCHES = ['staging-nodb']
+COMMIT_DATE_FORMAT = "%d/%m/%y"
 
 
 async def generate_changelog(local_head, local_remote_diff):
     changelog = ''
 
     for commit in local_head.iter_commits(local_remote_diff):
-        changelog += f'•[{commit.committed_datetime.strftime(commit_date_format)}]:'
+        changelog += f'•[{commit.committed_datetime.strftime(COMMIT_DATE_FORMAT)}]:'
         changelog += f' {commit.summary} <{commit.author}>\n'
 
     return changelog
@@ -56,7 +54,7 @@ async def upstream(event):
         return
 
     try: # Ensure the upstream remote exists
-        repo.create_remote('upstream', upstream_repo)
+        repo.create_remote('upstream', UPSTREAM_REPO)
     except: # Don't cause an uproar if it already exists
         pass
 
@@ -69,7 +67,7 @@ async def upstream(event):
         return
 
     try:
-        changelog = await generate_changelog(repo, f'HEAD..upstream/{valid_branches[0]}')
+        changelog = await generate_changelog(repo, f'HEAD..upstream/{VALID_BRANCHES[0]}')
     except TypeError:
         repo.git.reset('--hard', 'FETCH_HEAD')
         await event.edit("`The local branch wasn't properly set up so it was reset to FETCH_HEAD.`")
@@ -105,10 +103,12 @@ async def upstream(event):
         return
 
     await event.edit('`Successfully updated to latest bot revision!\n'
-                    'The bot will pass go, will collect $200, and will automagically restart…`')
+                     'The bot will pass go, will collect $200, and will automagically restart…`')
 
-    try: await event.client.disconnect()
-    except: pass # we dont care
+    try:
+        await event.client.disconnect()
+    except:
+        pass # we dont care
     # Spin a new instance of bot
     execl(sys.executable, sys.executable, *sys.argv)
     # Shut the existing one down

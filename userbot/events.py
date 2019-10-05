@@ -6,11 +6,15 @@
 """ Userbot module for managing events.
  One of the main components of the userbot. """
 
-import math, subprocess, sys, traceback, datetime, asyncio
-from telethon import events
-from userbot import bot, CMDPREFIX
-from traceback import format_exc
+from asyncio import create_subprocess_shell, subprocess
+from datetime import datetime
+from sys import exc_info
 from time import gmtime, strftime
+from traceback import format_exc
+
+from telethon import events
+
+from userbot import CMDPREFIX, bot
 
 
 def register(**args):
@@ -45,8 +49,8 @@ def errors_handler(func):
 
             date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             new = {
-                'error': str(sys.exc_info()[1]),
-                'date': datetime.datetime.now()
+                'error': str(exc_info()[1]),
+                'date': datetime.now()
             }
 
             text = "**Sorry, I encountered a error!**\n"
@@ -67,19 +71,19 @@ def errors_handler(func):
             ftext += "\n\nEvent Trigger:\n"
             ftext += str(errors.text)
             ftext += "\n\nTraceback info:\n"
-            ftext += str(traceback.format_exc())
+            ftext += str(format_exc())
             ftext += "\n\nError text:\n"
-            ftext += str(sys.exc_info()[1])
+            ftext += str(exc_info()[1])
             ftext += "\n\n--------END USERBOT TRACEBACK LOG--------"
 
             command = "git log --pretty=format:\"%an: %s\" -5"
 
             ftext += "\n\n\nLast 5 commits:\n"
 
-            process = await asyncio.create_subprocess_shell(
+            process = await create_subprocess_shell(
                 command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE)
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
             stdout, stderr = await process.communicate()
             result = str(stdout.decode().strip()) \
                 + str(stderr.decode().strip())

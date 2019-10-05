@@ -6,10 +6,12 @@
 """ Userbot module containing commands related to android"""
 
 import re
-from requests import get
+
 from bs4 import BeautifulSoup
+from requests import get
+
 from userbot import CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 GITHUB = 'https://github.com'
 DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
@@ -21,7 +23,7 @@ DEVICES_DATA = 'https://raw.githubusercontent.com/androidtrackers/' \
 async def magisk(event):
     # for .magisk command, give links to the latest releases
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/master/'
-    urlCanary = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/'
+    url_canary = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/'
 
     releases = 'Latest Magisk Releases:\n'
 
@@ -32,7 +34,7 @@ async def magisk(event):
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
                     f'[Uninstaller]({data["uninstaller"]["link"]})\n'
     for variant in ['release']: # canary builds
-        data = get(urlCanary + variant + '.json').json()
+        data = get(url_canary + variant + '.json').json()
         name = 'Canary'
         releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
@@ -57,9 +59,9 @@ async def device_info(event):
     found = [
         i for i in get(DEVICES_DATA).json()
         if i["device"].lower() == device.lower() or
-            i["model"].lower() == device.lower() or
-            i["name"].lower() == device.lower() or
-            f'{i["brand"]} {i["name"]}'.lower() == device.lower()
+        i["model"].lower() == device.lower() or
+        i["name"].lower() == device.lower() or
+        f'{i["brand"]} {i["name"]}'.lower() == device.lower()
     ]
     if found:
         reply = f'Search results for {device}:\n'
@@ -132,7 +134,7 @@ async def devices_specifications(event):
             data = re.findall(r'</b>: (.*?)<br/>', item)[0]\
                 .replace('<b>', '').replace('</b>', '').strip()
             reply += f'**{title}**: {data}\n'
-    
+
     if reply or reply != "":
         await event.edit(reply)
     else:

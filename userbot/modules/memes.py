@@ -6,11 +6,15 @@
 #
 # Userbot module for having some fun.
 
-import asyncio, re, time
+import asyncio
+import re
+import time
+from random import choice, getrandbits, randint
+
 from cowpy import cow
-from random import randint, choice, getrandbits
+
 from userbot import CMD_HELP, ZALG_LIST
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 METOOSTR = [
     "Me too thanks","Haha yes, me too","Same lol","Me irl",

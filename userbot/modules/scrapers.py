@@ -5,26 +5,23 @@
 #
 """ Userbot module containing various scrapers. """
 
-import os, aiohttp, re
-from asyncio import create_subprocess_shell as asyncsh
-from asyncio.subprocess import PIPE as asyncsh_PIPE
-from html import unescape
-from urllib import parse
-from urllib.error import HTTPError
-from search_engine_parser import GoogleSearch
+import os
+import re
+
+import aiohttp
 from emoji import get_emoji_regexp
 from google_images_download import google_images_download
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
 from pytube import YouTube
 from pytube.helpers import safe_filename
 from requests import get
+from search_engine_parser import GoogleSearch
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
-from userbot import CMD_HELP, BOTLOG, BOTLOG_CHATID, bot
-from userbot.events import register, errors_handler
+
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot.events import errors_handler, register
 
 LANG = "en"
 UD_QUERY_URL = 'http://api.urbandictionary.com/v0/define'
@@ -78,8 +75,8 @@ async def gsearch(event):
     except IndexError:
         page = 1
     search_args = (str(match), int(page))
-    gsearch = GoogleSearch()
-    gresults = gsearch.search(*search_args)
+    google_search = GoogleSearch()
+    gresults = google_search.search(*search_args)
     msg = ""
     for i in range(10):
         try:
@@ -90,8 +87,8 @@ async def gsearch(event):
         except IndexError:
             break
     await event.edit("**Search Query:**\n`" + match +
-                       "`\n\n**Results:**\n" + msg,
-                       link_preview=False)
+                     "`\n\n**Results:**\n" + msg,
+                     link_preview=False)
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
@@ -128,7 +125,7 @@ async def wiki(event):
             os.remove("output.txt")
         return
     await event.edit("**Search:**\n`" + match + "`\n\n**Result:**\n" +
-                        result)
+                     result)
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID, f"Wiki query {match} was executed successfully")
@@ -158,7 +155,7 @@ async def urban_dict(event):
             response = await response.json()
         else:
             response = response.status
-    
+
     await session.close()
 
     try:
@@ -186,9 +183,9 @@ async def urban_dict(event):
         file = open("output.txt", "w+")
         file.write(definition)
         file.close()
-        await event.client.send_file(event.chat_id, "output.txt",
-            caption="`Output was too large, sent it as a file.`")
-        if os.path.exists("output.txt"): os.remove("output.txt")
+        await event.client.send_file(event.chat_id, "output.txt", caption="`Output was too large, sent it as a file.`")
+        if os.path.exists("output.txt"):
+            os.remove("output.txt")
         await event.delete()
         return
 
@@ -207,15 +204,15 @@ async def text_to_speech(event):
         message = textx.text
     else:
         await event.edit("`Give a text or reply to a "
-                            "message for Text-to-Speech!`")
+                         "message for Text-to-Speech!`")
         return
 
     try:
         gTTS(message, LANG)
     except AssertionError:
         await event.edit('The text is empty.\n'
-                            'Nothing left to speak after pre-precessing, '
-                            'tokenizing and cleaning.')
+                         'Nothing left to speak after pre-precessing, '
+                         'tokenizing and cleaning.')
         return
     except ValueError:
         await event.edit('Language is not supported.')
@@ -232,9 +229,7 @@ async def text_to_speech(event):
         tts = gTTS(message, LANG)
         tts.save("k.mp3")
     with open("k.mp3", "r"):
-        await event.client.send_file(event.chat_id,
-                                        "k.mp3",
-                                        voice_note=True)
+        await event.client.send_file(event.chat_id, "k.mp3", voice_note=True)
         os.remove("k.mp3")
         if BOTLOG:
             await event.client.send_message(
@@ -255,12 +250,11 @@ async def translateme(event):
     elif textx:
         message = textx.text
     else:
-        await event.edit("`Give a text or reply "
-                            "to a message to translate!`")
+        await event.edit("`Give a text or reply to a message to translate!`")
         return
 
     try:
-        reply_text = translator.translate(deEmojify(message), dest=LANG)
+        reply_text = translator.translate(de_emojify(message), dest=LANG)
     except ValueError:
         await event.edit("Invalid destination language.")
         return
@@ -311,8 +305,7 @@ async def download_video(event):
                                             subtype="mp4").first()
 
     if video_stream is None:
-        all_streams = video.streams.filter(progressive=True,
-                                            subtype="mp4").all()
+        all_streams = video.streams.filter(progressive=True, subtype="mp4").all()
         available_qualities = ""
 
         for item in all_streams[:-1]:
@@ -320,9 +313,9 @@ async def download_video(event):
         available_qualities += all_streams[-1].resolution
 
         await event.edit("**A stream matching your query wasn't found. "
-                            "Try again with different options.\n**"
-                            "**Available Qualities:**\n"
-                            f"{available_qualities}")
+                         "Try again with different options.\n**"
+                         "**Available Qualities:**\n"
+                         f"{available_qualities}")
         return
 
     video_size = video_stream.filesize / 1000000
@@ -330,11 +323,11 @@ async def download_video(event):
     if video_size >= 50:
         await event.edit(
             ("**File larger than 50MB. Sending the link instead.\n**"
-                f"Get the video [here]({video_stream.url})\n\n"
-                "**If the video plays instead of downloading, "
-                "right click(or long press on touchscreen) and "
-                "press 'Save Video As…'(may depend on the browser) "
-                "to download the video.**"))
+             f"Get the video [here]({video_stream.url})\n\n"
+             "**If the video plays instead of downloading, "
+             "right click(or long press on touchscreen) and "
+             "press 'Save Video As…'(may depend on the browser) "
+             "to download the video.**"))
         return
 
     await event.edit("**Downloading...**")
@@ -357,9 +350,9 @@ async def download_video(event):
     await event.delete()
 
 
-def deEmojify(inputString):
+def de_emojify(input_string):
     # Remove emojis and other non-safe characters from string
-    return get_emoji_regexp().sub(u'', inputString)
+    return get_emoji_regexp().sub(u'', input_string)
 
 
 CMD_HELP.update({
@@ -372,7 +365,8 @@ CMD_HELP.update({
     ".google <search_query>"
     "\nUsage: Does a search on Google."
 })
-CMD_HELP.update({'wiki':
+CMD_HELP.update({
+    'wiki':
     ".wiki <search_query>"
     "\nUsage: Does a Wikipedia search."
 })

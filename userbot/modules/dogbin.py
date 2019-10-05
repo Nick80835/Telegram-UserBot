@@ -6,9 +6,10 @@
 """ Userbot module containing commands
     for interacting with dogbin(https://del.dog)"""
 
-from requests import get, post, exceptions
+from requests import exceptions, get, post
+
 from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
-from userbot.events import register, errors_handler
+from userbot.events import errors_handler, register
 
 DOGBIN_URL = "https://del.dog/"
 
@@ -42,12 +43,12 @@ async def paste(event):
 
         if response['isUrl']:
             reply_text = ("`Pasted successfully!`\n\n"
-                            f"`Shortened URL:` {dogbin_final_url}\n\n"
-                            "Original(non-shortened) URLs`\n"
-                            f"`Dogbin URL`: {DOGBIN_URL}v/{key}\n")
+                          f"`Shortened URL:` {dogbin_final_url}\n\n"
+                          "Original(non-shortened) URLs`\n"
+                          f"`Dogbin URL`: {DOGBIN_URL}v/{key}\n")
         else:
             reply_text = ("`Pasted successfully!`\n\n"
-                            f"`Dogbin URL`: {dogbin_final_url}")
+                          f"`Dogbin URL`: {dogbin_final_url}")
     else:
         reply_text = ("`Failed to reach Dogbin`")
 
@@ -89,17 +90,17 @@ async def get_dogbin_content(event):
 
     try:
         resp.raise_for_status()
-    except exceptions.HTTPError as HTTPErr:
+    except exceptions.HTTPError as http_error:
         await event.edit(
             "Request returned an unsuccessful status code.\n\n" +
-            str(HTTPErr))
+            str(http_error))
         return
-    except exceptions.Timeout as TimeoutErr:
-        await event.edit("Request timed out." + str(TimeoutErr))
+    except exceptions.Timeout as timeout_error:
+        await event.edit("Request timed out." + str(timeout_error))
         return
-    except exceptions.TooManyRedirects as RedirectsErr:
+    except exceptions.TooManyRedirects as redirects_error:
         await event.edit("Request exceeded the configured \
-                        number of maximum redirections." + str(RedirectsErr))
+                        number of maximum redirections." + str(redirects_error))
         return
 
     reply_text = "`Fetched dogbin URL content "

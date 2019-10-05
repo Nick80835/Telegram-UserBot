@@ -5,9 +5,10 @@
 #
 """ Userbot module containing dogs and cats. """
 
-import asyncio, re, aiohttp
-from userbot import CMD_HELP, bot
-from userbot.events import register, errors_handler
+import aiohttp
+
+from userbot import CMD_HELP
+from userbot.events import errors_handler, register
 
 CAT_URL = 'http://api.thecatapi.com/v1/images/search'
 DOG_URL = 'http://api.thedogapi.com/v1/images/search'
@@ -19,7 +20,7 @@ IMGPARAM = {"mime_types": "jpg,png"}
 GIFPARAM = {"mime_types": "gif"}
 
 
-async def nekoAtsume(params):
+async def neko_atsume(params):
     session = aiohttp.ClientSession(headers=CAT_HEADERS)
 
     async with session.get(CAT_URL, params=params) as response:
@@ -31,7 +32,7 @@ async def nekoAtsume(params):
     await session.close()
     return neko
 
-async def inuAtsume(params):
+async def inu_atsume(params):
     session = aiohttp.ClientSession(headers=DOG_HEADERS)
 
     async with session.get(DOG_URL, params=params) as response:
@@ -47,9 +48,9 @@ async def inuAtsume(params):
 @register(outgoing=True, pattern="cat")
 @errors_handler
 async def cat(event):
-    neko = await nekoAtsume(IMGPARAM)
+    neko = await neko_atsume(IMGPARAM)
 
-    if type(neko) == int:
+    if isinstance(neko, int):
         await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
         return
 
@@ -60,9 +61,9 @@ async def cat(event):
 @register(outgoing=True, pattern="cathd")
 @errors_handler
 async def cathd(event):
-    neko = await nekoAtsume(IMGPARAM)
+    neko = await neko_atsume(IMGPARAM)
 
-    if type(neko) == int:
+    if isinstance(neko, int):
         await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
         return
 
@@ -73,9 +74,9 @@ async def cathd(event):
 @register(outgoing=True, pattern="catgif")
 @errors_handler
 async def catgif(event):
-    neko = await nekoAtsume(GIFPARAM)
+    neko = await neko_atsume(GIFPARAM)
 
-    if type(neko) == int:
+    if isinstance(neko, int):
         await event.edit(f"`There was an error finding the cats! :( -> {neko}`")
         return
 
@@ -86,9 +87,9 @@ async def catgif(event):
 @register(outgoing=True, pattern="dog")
 @errors_handler
 async def dog(event):
-    inu = await inuAtsume(IMGPARAM)
+    inu = await inu_atsume(IMGPARAM)
 
-    if type(inu) == int:
+    if isinstance(inu, int):
         await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
         return
 
@@ -99,9 +100,9 @@ async def dog(event):
 @register(outgoing=True, pattern="doghd")
 @errors_handler
 async def doghd(event):
-    inu = await inuAtsume(IMGPARAM)
+    inu = await inu_atsume(IMGPARAM)
 
-    if type(inu) == int:
+    if isinstance(inu, int):
         await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
         return
 
@@ -112,9 +113,9 @@ async def doghd(event):
 @register(outgoing=True, pattern="doggif")
 @errors_handler
 async def doggif(event):
-    inu = await inuAtsume(GIFPARAM)
+    inu = await inu_atsume(GIFPARAM)
 
-    if type(inu) == int:
+    if isinstance(inu, int):
         await event.edit(f"`There was an error finding the dogs! :( -> {inu}`")
         return
 
