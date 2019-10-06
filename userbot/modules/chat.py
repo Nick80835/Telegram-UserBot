@@ -21,32 +21,32 @@ async def useridgetter(target):
         if not message.forward:
             user_id = message.sender.id
             if message.sender.username:
-                name = "@" + message.sender.username
+                name = f"@{message.sender.username}"
             else:
-                name = "**" + message.sender.first_name + "**"
-
+                name = f"**{message.sender.first_name}**"
         else:
             user_id = message.forward.sender.id
             if message.forward.sender.username:
-                name = "@" + message.forward.sender.username
+                name = f"@{message.forward.sender.username}"
             else:
-                name = "*" + message.forward.sender.first_name + "*"
-        await target.edit("**Name:** {} \n**User ID:** `{}`".format(
-            name, user_id))
+                name = f"**{message.forward.sender.first_name}**"
+        await target.edit(f"**Name:** {name}\n**User ID:** `{user_id}`")
+    else:
+        await target.edit(f"`Reply to someone to get their user ID!`")
 
 
 @register(outgoing=True, pattern="chatid")
 @errors_handler
 async def chatidgetter(chat):
-    """ For .chatid, returns the ID of the chat you are in at that moment. """
-    await chat.edit("Chat ID: `" + str(chat.chat_id) + "`")
+    # For .chatid, returns the ID of the chat you are in at that moment.
+    await chat.edit(f"**Chat ID:** `{chat.chat_id}`")
 
 
 @register(outgoing=True, pattern="log")
 @errors_handler
 async def log(log_text):
-    """ For .log command, forwards a message
-     or the command argument to the bot logs group """
+    # For .log command, forwards a message
+    # or the command argument to the bot logs group
     if BOTLOG:
         if log_text.reply_to_msg_id:
             reply_msg = await log_text.get_reply_message()
@@ -60,8 +60,9 @@ async def log(log_text):
             return
         await log_text.edit("`Logged Successfully`")
     else:
-        await log_text.edit(
-            "`This feature requires Logging to be enabled!`")
+        await log_text.edit("`This feature requires Logging to be enabled!`")
+        return
+
     sleep(2)
     await log_text.delete()
 
@@ -69,8 +70,8 @@ async def log(log_text):
 @register(outgoing=True, pattern="kickme")
 @errors_handler
 async def kickme(leave):
-    """ Basically it's .kickme command """
-    await leave.edit("`Nope, no, no, I go away`")
+    # Basically it's .kickme command
+    await leave.edit("`Nope, no, no, I go away!`")
     await bot(LeaveChannelRequest(leave.chat_id))
 
 

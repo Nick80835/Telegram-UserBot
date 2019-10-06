@@ -25,18 +25,18 @@ async def magisk(event):
     url = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/master/'
     url_canary = 'https://raw.githubusercontent.com/topjohnwu/magisk_files/canary/'
 
-    releases = 'Latest Magisk Releases:\n'
+    releases = '**Latest Magisk Releases:**\n'
 
     for variant in ['stable', 'beta']: # stable and beta builds
         data = get(url + variant + '.json').json()
         name = variant.title()
-        releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
+        releases += f'`{name}:` [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
                     f'[Uninstaller]({data["uninstaller"]["link"]})\n'
     for variant in ['release']: # canary builds
         data = get(url_canary + variant + '.json').json()
         name = 'Canary'
-        releases += f'{name}: [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
+        releases += f'`{name}:` [ZIP v{data["magisk"]["version"]}]({data["magisk"]["link"]}) | ' \
                     f'[APK v{data["app"]["version"]}]({data["app"]["link"]}) | ' \
                     f'[Uninstaller]({data["uninstaller"]["link"]})\n'
 
@@ -64,7 +64,7 @@ async def device_info(event):
         f'{i["brand"]} {i["name"]}'.lower() == device.lower()
     ]
     if found:
-        reply = f'Search results for {device}:\n'
+        reply = f'`Search results for {device}:`\n'
         for item in found:
             brand = item['brand']
             name = item['name']
@@ -120,7 +120,7 @@ async def devices_specifications(event):
             if device in i.text.strip().lower()
         ]
     except IndexError:
-        await event.edit(f"`can't find {device}!`")
+        await event.edit(f"`Can't find {device}!`")
     if len(device_page_url) > 2:
         device_page_url = device_page_url[:2]
     reply = ''
@@ -165,9 +165,9 @@ async def twrp(event):
     dl_file = download.text
     size = page.find("span", {"class": "filesize"}).text
     date = page.find("em").text.strip()
-    reply = f'**Latest TWRP for {device}:**\n' \
+    reply = f'`Latest TWRP for {device}:`\n' \
         f'[{dl_file}]({dl_link}) - __{size}__\n' \
-        f'**Updated:** __{date}__\n'
+        f'`Last updated:` __{date}__\n'
     await event.edit(reply)
 
 

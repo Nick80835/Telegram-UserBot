@@ -23,12 +23,6 @@ from userbot.events import errors_handler, register
 NO_ADMIN = "`You aren't an admin!`"
 NO_PERM = "`You don't have sufficient permissions!`"
 
-CHAT_PP_CHANGED = "`Chat Picture Changed`"
-CHAT_PP_ERROR = "`Some issue with updating the pic,`" \
-                "`maybe you aren't an admin,`" \
-                "`or don't have the desired rights.`"
-INVALID_MEDIA = "`Invalid Extension`"
-
 BAN_RIGHTS = ChatBannedRights(
     until_date=None,
     view_messages=True,
@@ -256,7 +250,7 @@ async def remove_deleted_accounts(event):
     # For .delusers command, remove deleted accounts from chat
     con = event.pattern_match.group(1)
     del_u = 0
-    del_status = "`No deleted accounts found, Group is cleaned as Hell`"
+    del_status = "`No deleted accounts found, this group is clean as Hell.`"
 
     if not event.is_group:
         await event.edit("`This command is only for groups!`")
@@ -269,9 +263,7 @@ async def remove_deleted_accounts(event):
                 del_u += 1
 
         if del_u > 0:
-            del_status = f"found **{del_u}** \
-                deleted account(s) in this group \
-            \nclean them by using .delusers clean"
+            del_status = f"`Found` **{del_u}** `deleted account(s) in this group.\nclean them by using .delusers clean`"
 
         await event.edit(del_status)
         return
@@ -305,11 +297,12 @@ async def remove_deleted_accounts(event):
             del_u += 1
 
     if del_u > 0:
-        del_status = f"cleaned **{del_u}** deleted account(s)"
-
-    if del_a > 0:
-        del_status = f"cleaned **{del_u}** deleted account(s) \
-\n**{del_a}** deleted admin accounts are not removed"
+        if del_a == 0:
+            del_status = f"`Cleaned` **{del_u}** `deleted account(s).`"
+        else:
+            del_status = f"`Cleaned` **{del_u}** `deleted account(s).`\n**{del_a}** `deleted admin accounts were not removed.`"
+    elif del_a > 0:
+        del_status = f"**{del_a}** `deleted admin accounts were not removed and no other deleted accounts found.`"
 
     await event.edit(del_status)
 
@@ -319,23 +312,25 @@ async def remove_deleted_accounts(event):
 async def list_admins(event):
     # For .adminlist command, list all of the admins of the chat
     if not event.is_group:
-        await event.edit("Are you sure this is a group?")
+        await event.edit("`Are you sure this is a group?`")
         return
+
     info = await event.client.get_entity(event.chat_id)
     title = info.title if info.title else "this chat"
-    mentions = f'<b>Admins in {title}:</b> \n'
+    mentions = f'<b>Admins in {title}:</b>\n'
+
     try:
         async for user in event.client.iter_participants(
                 event.chat_id, filter=ChannelParticipantsAdmins):
             if not user.deleted:
-                link_unf = "<a href=\"tg://user?id={}\">{}</a>"
-                link = link_unf.format(user.id, user.first_name)
+                link = f"<a href=\"tg://user?id={user.id}\">{user.first_name}</a>"
                 userid = f"<code>{user.id}</code>"
                 mentions += f"\n{link} {userid}"
             else:
                 mentions += f"\nDeleted Account <code>{user.id}</code>"
     except ChatAdminRequiredError as err:
-        mentions += " " + str(err) + "\n"
+        mentions += f" {err}\n"
+
     await event.edit(mentions, parse_mode="html")
 
 
@@ -414,8 +409,7 @@ async def kick(event):
         return
     await event.client(EditBannedRequest(event.chat_id, user.id, ChatBannedRights(until_date=None)))
 
-    kmsg = "`Kicked` [{}](tg://user?id={})`!`"
-    await event.edit(kmsg.format(user.first_name, user.id))
+    await event.edit(f"`Kicked` [{user.first_name}](tg://user?id={user.id})`!`")
 
     if BOTLOG:
         await event.client.send_message(

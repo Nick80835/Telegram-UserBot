@@ -17,20 +17,19 @@ from userbot.events import errors_handler, register
 
 @register(outgoing=True, pattern="random")
 @errors_handler
-async def randomise(event):
+async def randomchoice(event):
     # For .random command, get a random item from the list of event.
     if len(event.pattern_match.group().split()) > 1:
         itemlist = event.pattern_match.group().split()[1:]
         chosenitem = choice(itemlist)
-        await event.edit("**Query: **\n`" + ' '.join(itemlist) +
-                            "`\n**Output: **\n`" + chosenitem + "`")
+        await event.edit(f"**Query:**\n`{' '.join(itemlist)}`\n**Output:**\n`{chosenitem}`")
     else:
         await event.edit("`Give me a list of stuff to pick from!`")
 
 
 @register(outgoing=True, pattern="sleep")
 @errors_handler
-async def sleepybot(event):
+async def sleepbot(event):
     # For .sleep command, let the userbot snooze for a few second.
     if len(event.pattern_match.group().split()) > 1:
         counter = int(event.pattern_match.group().split()[1])
@@ -38,7 +37,7 @@ async def sleepybot(event):
         if BOTLOG:
             await event.client.send_message(
                 BOTLOG_CHATID,
-                f"You put the bot to sleep for {str(counter)} seconds",
+                f"You put the bot to sleep for {counter} seconds",
             )
         sleep(counter)
         await event.edit("`Okay, I'm done sleeping!`")
@@ -53,7 +52,7 @@ async def sleepybot(event):
 
 @register(outgoing=True, pattern="shutdown")
 @errors_handler
-async def killdabot(event):
+async def shutdownbot(event):
     # For .shutdown command, shut the bot down
     await event.edit("`Goodbye…`")
 
@@ -75,7 +74,7 @@ async def killdabot(event):
 
 @register(outgoing=True, pattern="restart")
 @errors_handler
-async def restartdabot(event):
+async def restartbot(event):
     await event.edit("`Restarting bot…`")
     if BOTLOG:
         await event.client.send_message(BOTLOG_CHATID, "#RESTART\nBot restarted")
@@ -88,14 +87,14 @@ async def restartdabot(event):
 
 @register(outgoing=True, pattern="support")
 @errors_handler
-async def bot_support(event):
+async def support(event):
     # For .support command, just returns the group link
-    await event.edit("Link Portal: @userbot_support")
+    await event.edit("`Link Portal:` @userbot_support")
 
 
 @register(outgoing=True, pattern="repo")
 @errors_handler
-async def repo_is_here(event):
+async def repo(event):
     # For .repo command, just returns the repo URL
     await event.edit("https://github.com/RaphielGang/Telegram-UserBot/")
 

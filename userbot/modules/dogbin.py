@@ -24,7 +24,7 @@ async def paste(event):
     match = event.pattern_match.group(1).strip()
     reply_id = event.reply_to_msg_id
     if not match and not reply_id:
-        await event.edit("There's nothing to paste.")
+        await event.edit("`There's nothing to paste.`")
         return
 
     if match:
@@ -42,13 +42,12 @@ async def paste(event):
         dogbin_final_url = DOGBIN_URL + key
 
         if response['isUrl']:
-            reply_text = ("`Pasted successfully!`\n\n"
-                          f"`Shortened URL:` {dogbin_final_url}\n\n"
-                          "Original(non-shortened) URLs`\n"
-                          f"`Dogbin URL`: {DOGBIN_URL}v/{key}\n")
+            reply_text = ("`Pasted successfully!`\n"
+                          f"`Shortened URL:` {dogbin_final_url}\n"
+                          f"`Dogbin URL:` {DOGBIN_URL}v/{key}\n")
         else:
             reply_text = ("`Pasted successfully!`\n\n"
-                          f"`Dogbin URL`: {dogbin_final_url}")
+                          f"`Dogbin URL:` {dogbin_final_url}")
     else:
         reply_text = ("`Failed to reach Dogbin`")
 
@@ -56,7 +55,7 @@ async def paste(event):
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
-            "Paste query `" + message + "` was executed successfully",
+            f"`Paste query` **{message}** `was executed successfully!`"
         )
 
 
@@ -82,8 +81,7 @@ async def get_dogbin_content(event):
     elif message.startswith("del.dog/"):
         message = message[len("del.dog/"):]
     else:
-        await event.edit("`Are you sure you're \
-                            using a valid dogbin URL?`")
+        await event.edit("`Are you sure you're using a valid dogbin URL?`")
         return
 
     resp = get(f'{DOGBIN_URL}raw/{message}')
@@ -91,27 +89,23 @@ async def get_dogbin_content(event):
     try:
         resp.raise_for_status()
     except exceptions.HTTPError as http_error:
-        await event.edit(
-            "Request returned an unsuccessful status code.\n\n" +
-            str(http_error))
+        await event.edit(f"`Request returned an unsuccessful status code!\nError: {http_error}`")
         return
     except exceptions.Timeout as timeout_error:
-        await event.edit("Request timed out." + str(timeout_error))
+        await event.edit(f"`Request timed out!\nError: {timeout_error}`")
         return
     except exceptions.TooManyRedirects as redirects_error:
-        await event.edit("Request exceeded the configured \
-                        number of maximum redirections." + str(redirects_error))
+        await event.edit(f"`Request exceeded the configured number of maximum redirections!\nError: {redirects_error}`")
         return
 
-    reply_text = "`Fetched dogbin URL content "
-    reply_text += "successfully!`\n\n`Content:` " + resp.text
+    reply_text = f"`Fetched dogbin URL content successfully!\nContent:` {resp.text}"
 
     await event.edit(reply_text)
+
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
-            "Get dogbin content query for `" + message + "` was \
-executed successfully",
+            f"`Get dogbin content query for` **{message}** `was executed successfully`"
         )
 
 

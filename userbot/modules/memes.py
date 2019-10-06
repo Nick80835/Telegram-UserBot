@@ -156,8 +156,7 @@ async def vapor(event): # Vaporize everything!
     elif textx:
         message = textx.text
     else:
-        await event.edit("`Ｇｉｖｅ ｓｏｍｅ ｔｅｘｔ ｆｏｒ ｖａｐｏｒ！`")
-        return
+        message = "Gimme some text to vaporize!"
 
     for charac in message:
         if 0x21 <= ord(charac) <= 0x7F:
@@ -181,8 +180,7 @@ async def stretch(event): # Stretch it.
     elif textx:
         message = textx.text
     else:
-        await event.edit("`GiiiiiiiB sooooooomeeeeeee teeeeeeext!`")
-        return
+        message = "Gib some text to stretch!"
 
     reply_text = re.sub(r"([aeiouAEIOUａｅｉｏｕＡＥＩＯＵаеиоуюяыэё])",
                         (r"\1" * randint(3, 10)), message)
@@ -200,10 +198,7 @@ async def zal(event): # Invoke the feeling of chaos.
     elif textx:
         message = textx.text
     else:
-        await event.edit(
-            "`gͫ ̆ i̛ ̺ v͇̆ ȅͅ   a̢ͦ   s̴̪ c̸̢ ä̸ rͩͣ y͖͞   t̨͚ é̠ x̢͖  t͔͛`"
-        )
-        return
+        message = "Gimme text to zalgofy!"
 
     for charac in message:
         if not charac.isalpha():
@@ -235,8 +230,7 @@ async def faces(event): # UwU
     elif textx:
         message = textx.text
     else:
-        await event.edit("`UwU no text given!`")
-        return
+        message = "I need text to curse with owo!"
 
     reply_text = re.sub(r"(r|l)", "w", message)
     reply_text = re.sub(r"(R|L)", "W", reply_text)
@@ -316,8 +310,8 @@ async def claptext(event): # Praise people!
     elif textx:
         message = textx.text
     else:
-        await event.edit("`Hah, I don't clap pointlessly!`")
-        return
+        message = "Hah, I don't clap pointlessly!"
+
     reply_text = "👏 "
     reply_text += message.replace(" ", " 👏 ")
     reply_text += " 👏"
@@ -327,10 +321,7 @@ async def claptext(event): # Praise people!
 @register(outgoing=True, pattern="bt")
 @errors_handler
 async def bluetext(event): # Believe me, you will find this useful.
-    if await event.get_reply_message():
-        await event.edit(
-            "`BLUETEXT MUST CLICK.`\n"
-            "`Are you a stupid animal which is attracted to colours?`")
+    await event.edit("/BLUETEXT /MUST /CLICK\n/IM /A /STOOPID /ANIMAL /THATS /ATTRACTED /TO /COLORZ!")
 
 
 @register(pattern='type')
@@ -343,9 +334,9 @@ async def typewriter(event): # Just a small command to make your keyboard become
     elif textx:
         message = textx.text
     else:
-        await event.edit("`Give a text to type!`")
-        return
-    sleep_time = 0.03
+        message = "Gimme text to type!"
+
+    sleep_time = 0.02
     typing_symbol = "|"
     old_text = ''
     await event.edit(typing_symbol)
