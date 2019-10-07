@@ -261,7 +261,7 @@ async def translateme(event):
     try:
         reply_text = translator.translate(de_emojify(message), dest=LANG)
     except ValueError:
-        await event.edit("Invalid destination language.")
+        await event.edit("`Invalid destination language.`")
         return
 
     source_lan = LANGUAGES[f'{reply_text.src.lower()}']
@@ -269,8 +269,8 @@ async def translateme(event):
     reply_text = f"**Source ({source_lan.title()}):**`\n{message}`**\n\
 \nTranslation ({transl_lan.title()}):**`\n{reply_text.text}`"
 
-    await event.client.send_message(event.chat_id, reply_text)
-    await event.delete()
+    await event.edit(reply_text)
+
     if BOTLOG:
         await event.client.send_message(
             BOTLOG_CHATID,
@@ -284,10 +284,10 @@ async def lang(event):
     # For .lang command, change the default langauge of userbot scrapers
     global LANG
     LANG = event.pattern_match.group(1)
-    await event.edit("Default language changed to **" + LANG + "**")
+    await event.edit(f"`Default language changed to` **{LANG}**")
     if BOTLOG:
         await event.client.send_message(
-            BOTLOG_CHATID, "Default language changed to **" + LANG + "**")
+            BOTLOG_CHATID, f"`Default language changed to` **{LANG}**")
 
 
 @register(outgoing=True, pattern="yt_dl")
