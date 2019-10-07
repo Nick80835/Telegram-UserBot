@@ -85,18 +85,11 @@ async def restartbot(event):
     exit()
 
 
-@register(outgoing=True, pattern="support")
-@errors_handler
-async def support(event):
-    # For .support command, just returns the group link
-    await event.edit("`Link Portal:` @userbot_support")
-
-
 @register(outgoing=True, pattern="repo")
 @errors_handler
 async def repo(event):
     # For .repo command, just returns the repo URL
-    await event.edit("https://github.com/RaphielGang/Telegram-UserBot/")
+    await event.edit("[Original source](https://github.com/RaphielGang/Telegram-UserBot)\n[This source](http://github.com/Nick80835/Telegram-UserBot)")
 
 
 CMD_HELP.update({
@@ -114,11 +107,6 @@ CMD_HELP.update({
     ".shutdown"
     "\nUsage: Sometimes you need to restart your bot. Sometimes you just hope to"
     "hear Windows XP shutting down…"
-})
-CMD_HELP.update({
-    "support":
-    ".support"
-    "\nUsage: If you need help, use this command."
 })
 CMD_HELP.update({
     "repo":
