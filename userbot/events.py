@@ -23,9 +23,9 @@ def register(**args):
 
     if args.get('pattern', None) is not None:
         if not args.get('custom_regex', False):
-            args['pattern'] = f"(?i)(?s)^{CMDPREFIX}{args['pattern']}(?: |$)(.*)"
+            args['pattern'] = f"(?is)^{CMDPREFIX}{args['pattern']}(?: |$)(.*)"
         else:
-            args['pattern'] = f"(?i)(?s){args['pattern']}"
+            args['pattern'] = f"(?is){args['pattern']}"
 
     for i in ['custom_regex', 'allow_edit']:
         if i in args:

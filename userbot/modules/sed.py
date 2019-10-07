@@ -68,23 +68,16 @@ async def sed(event):
         if textx:
             to_fix = textx.text
         else:
-            await event.edit(
-                "`Master, I don't have brains. Well you too don't I guess.`")
+            await event.edit("`Master, I don't have brains. Well you too don't I guess.`")
             return
 
         repl, repl_with, flags = sed_result
 
         if not repl:
-            await event.edit(
-                "`Master, I don't have brains. Well you too don't I guess.`")
+            await event.edit("`Master, I don't have brains. Well you too don't I guess.`")
             return
 
         try:
-            check = re.match(repl, to_fix, flags=re.IGNORECASE)
-            if check and check.group(0).lower() == to_fix.lower():
-                await event.edit("`Boi!, that's a reply. Don't use sed`")
-                return
-
             if "i" in flags and "g" in flags:
                 text = re.sub(repl, repl_with, to_fix, flags=re.I).strip()
             elif "i" in flags:
@@ -98,7 +91,7 @@ async def sed(event):
             await event.edit("B O I! [Learn Regex](https://regexone.com)")
             return
         if text:
-            await event.edit("Did you mean? \n\n`" + text + "`")
+            await event.edit(f"Did you mean:\n\n`{text}`")
 
 
 CMD_HELP.update({
