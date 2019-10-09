@@ -12,7 +12,7 @@ from PIL import Image
 from telethon.errors.rpcerrorlist import PhotoInvalidDimensionsError
 from telethon.tl.types import DocumentAttributeFilename
 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP
 from userbot.events import errors_handler, register
 from userbot.scaleutils.seam_carver import resize_image
 
@@ -39,8 +39,9 @@ async def stillscaler(event):
         return
 
     # download last photo (highres) as byte array
+    await event.edit("`Downloading media…`")
     image = io.BytesIO()
-    image = await bot.download_media(data, image)
+    await event.client.download_media(data, image)
     image = Image.open(image)
 
     width, height = image.size
@@ -67,6 +68,7 @@ async def stillscaler(event):
         height_scale = scale_pixels
 
     # scale the image
+    await event.edit("`Scaling media…`")
     image = await stillscale(image, width_scale, height_scale, image.size)
 
     scaled_io = io.BytesIO()

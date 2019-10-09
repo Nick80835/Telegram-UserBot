@@ -35,7 +35,7 @@ from random import randint, uniform
 from PIL import Image, ImageEnhance, ImageOps
 from telethon.tl.types import DocumentAttributeFilename
 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP
 from userbot.events import errors_handler, register
 
 
@@ -61,11 +61,13 @@ async def deepfryer(event):
         return
 
     # download last photo (highres) as byte array
+    await event.edit("`Downloading media…`")
     image = io.BytesIO()
-    image = await bot.download_media(data, image)
+    await event.client.download_media(data, image)
     image = Image.open(image)
 
     # fry the image
+    await event.edit("`Deep frying media…`")
     for _ in range(frycount):
         image = await deepfry(image)
 
