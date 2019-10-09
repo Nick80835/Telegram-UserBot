@@ -28,4 +28,5 @@ pyDownload
 psutil
 pylast
 numba
+numpy
 tqdm
