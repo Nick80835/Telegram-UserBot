@@ -27,3 +27,5 @@ humanize
 pyDownload
 psutil
 pylast
+numba
+tqdm
