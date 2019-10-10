@@ -6,6 +6,7 @@
 """ Userbot module for content-aware scaling. """
 
 import io
+from time import time_ns
 
 import numpy as np
 from numba import njit
@@ -70,8 +71,12 @@ async def stillscaler(event):
         height_scale = scale_pixels
 
     # scale the image
-    await event.edit(f"`Scaling media by {scale_pixels} pixels…`")
+    await event.edit(f"`Scaling media by {width_scale}/{height_scale} pixels…`")
+    time_before = time_ns()
     image = await stillscale(image, width_scale, height_scale, image.size)
+    time_after = time_ns()
+    time_taken = (time_after - time_before) / 1000000
+    await event.edit(f"`Scaling complete, {width_scale}/{height_scale} pixels in {int(time_taken)} milliseconds.`")
 
     scaled_io = io.BytesIO()
     scaled_io.name = "image.jpeg"
