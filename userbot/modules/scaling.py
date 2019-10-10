@@ -70,7 +70,7 @@ async def stillscaler(event):
         height_scale = scale_pixels
 
     # scale the image
-    await event.edit("`Scaling media…`")
+    await event.edit(f"`Scaling media by {scale_pixels} pixels…`")
     image = await stillscale(image, width_scale, height_scale, image.size)
 
     scaled_io = io.BytesIO()
