@@ -179,7 +179,7 @@ def energy_map(img):
     return en_map
 
 
-@njit(nogil=True, cache=True)
+@njit(nogil=True)
 def cumulative_energy(energy):
     """
     https://en.wikipedia.org/wiki/Seam_carving#Dynamic_programming
@@ -213,7 +213,7 @@ def cumulative_energy(energy):
     return paths, path_energies
 
 
-@njit(nogil=True, cache=True)
+@njit(nogil=True)
 def seam_end(energy_totals):
     """
     Parameters
@@ -230,7 +230,7 @@ def seam_end(energy_totals):
     return list(energy_totals[-1]).index(min(energy_totals[-1]))
 
 
-@njit(nogil=True, cache=True)
+@njit(nogil=True)
 def find_seam(paths, end_x):
     """
     Parameters

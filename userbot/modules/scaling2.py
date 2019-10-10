@@ -164,17 +164,13 @@ def remove_seam_grayscale(img, boolmask):
 
 
 @jit
-def get_minimum_seam(img, remove_mask=None):
+def get_minimum_seam(img):
     """
     DP algorithm for finding the seam of minimum energy. Code adapted from
     https://karthikkaranth.me/blog/implementing-seam-carving-with-python/
     """
     img_h, img_w = img.shape[:2]
     mag = backward_energy(img)
-
-    # give removal mask priority over protective mask by using larger negative value
-    if remove_mask is not None:
-        mag[np.where(remove_mask > MASK_THRESHOLD)] = -ENERGY_MASK_CONST * 100
 
     backtrack = np.zeros_like(mag, dtype=np.int)
 
@@ -207,16 +203,14 @@ def seams_removal(img, num_remove):
     for _ in range(num_remove):
         boolmask = get_minimum_seam(img)
         img = remove_seam(img, boolmask)
+
     return img
 
 
 def seam_carve(img, d_y, d_x):
-    output = img
+    img = seams_removal(img, d_x)
+    img = rotate_image(img, True)
+    img = seams_removal(img, d_y)
+    img = rotate_image(img, False)
 
-    output = seams_removal(output, d_x)
-
-    output = rotate_image(output, True)
-    output = seams_removal(output, d_y)
-    output = rotate_image(output, False)
-
-    return output
+    return img
