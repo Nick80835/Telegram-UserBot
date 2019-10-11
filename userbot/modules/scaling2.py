@@ -132,10 +132,6 @@ CMD_HELP.update({
 ### Scale utils ###
 
 
-ENERGY_MASK_CONST = 100000.0 # large energy value for protective masking
-MASK_THRESHOLD = 10          # minimum pixel intensity for binary mask
-
-
 @jit
 def rotate_image(image, clockwise):
     k = 1 if clockwise else 3
@@ -160,12 +156,6 @@ def remove_seam(img, boolmask):
     img_h, img_w = img.shape[:2]
     boolmask3c = np.stack([boolmask] * 3, axis=2)
     return img[boolmask3c].reshape((img_h, img_w - 1, 3))
-
-
-@jit
-def remove_seam_grayscale(img, boolmask):
-    img_h, img_w = img.shape[:2]
-    return img[boolmask].reshape((img_h, img_w - 1))
 
 
 @jit

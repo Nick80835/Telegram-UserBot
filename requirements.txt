@@ -29,6 +29,5 @@ psutil
 pylast
 numba
 numpy
-tqdm
 opencv-python
 scipy
