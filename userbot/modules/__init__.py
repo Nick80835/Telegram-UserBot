@@ -5,7 +5,7 @@
 #
 """ Init file which loads all of the modules """
 
-from userbot import LOGS
+from userbot import LOGS, DONT_LOAD
 
 
 def __list_all_modules():
@@ -17,6 +17,10 @@ def __list_all_modules():
         basename(f)[:-3] for f in mod_paths
         if isfile(f) and f.endswith(".py") and not f.endswith("__init__.py")
     ]
+
+    for i in DONT_LOAD:
+        if i in all_modules:
+            all_modules.remove(i)
 
     return all_modules
 

@@ -26,6 +26,12 @@ load_dotenv("config.env")
 API_KEY = getstr("API_KEY", None)
 API_HASH = getstr("API_HASH", None)
 
+# Modules to not load upon startup
+DONT_LOAD = getstr("DONT_LOAD", "").split(sep=" ")
+
+# Name of the session file to use
+SESSION_NAME = getstr("SESSION_NAME", "userbot")
+
 # Command prefix
 CMDPREFIX = re.escape(getstr("CMDPREFIX", "."))
 
@@ -52,7 +58,7 @@ PM_AUTO_BAN = getbool("PM_AUTO_BAN", "False")
 WELCOME_MUTE = getbool("WELCOME_MUTE", "False")
 
 # pylint: disable=invalid-name
-bot = TelegramClient("userbot", API_KEY, API_HASH)
+bot = TelegramClient(SESSION_NAME, API_KEY, API_HASH)
 
 # Global Variables
 COUNT_MSG = 0
