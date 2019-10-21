@@ -8,60 +8,44 @@
 """ Userbot module containing commands related to QR Codes. """
 
 import os
-from asyncio import sleep
-from datetime import datetime
 
 from requests import get, post
 
 from userbot import CMD_HELP
 from userbot.events import errors_handler, register
 
-
-def progress(current, total):
-    # Calculate and return the download progress with given arguments
-    print("Downloaded {} of {}\nCompleted {}".format(current, total, (current / total) * 100))
+ENC_URL = "https://api.qrserver.com/v1/create-qr-code/?data={}&size=200x200&charset-source=UTF-8&charset-target=UTF-8&ecc=L&color=0-0-0&bgcolor=255-255-255&margin=1&qzone=0&format=jpg"
+DEC_URL = "https://api.qrserver.com/v1/read-qr-code/?outputformat=json"
 
 
 @register(outgoing=True, pattern="getqr")
 @errors_handler
-async def parseqr(event):
+async def getqr(event):
     # For .getqr command, get QR Code content from the replied photo
-    if event.fwd_from:
-        return
-    start = datetime.now()
     downloaded_file_name = await event.client.download_media(
-        await event.get_reply_message(), progress_callback=progress)
-    url = "https://api.qrserver.com/v1/read-qr-code/?outputformat=json"
+        await event.get_reply_message())
     file = open(downloaded_file_name, "rb")
     files = {"file": file}
-    resp = post(url, files=files).json()
+    resp = post(DEC_URL, files=files).json()
     qr_contents = resp[0]["symbol"][0]["data"]
     file.close()
     os.remove(downloaded_file_name)
-    end = datetime.now()
-    duration = (end - start).seconds
-    await event.edit("Obtained QRCode contents in {} seconds.\n{}".format(
-        duration, qr_contents))
+    await event.edit(f"`QR code contents:`\n{qr_contents}")
 
 
 @register(outgoing=True, pattern="makeqr")
 @errors_handler
-async def make_qr(event):
+async def makeqr(event):
     # For .makeqr command, make a QR Code containing the given content
-    if event.fwd_from:
-        return
-    start = datetime.now()
     input_str = event.pattern_match.group(1)
     message = "SYNTAX: `.makeqr <long text to include>`"
-    reply_msg_id = None
+
     if input_str:
         message = input_str
     elif event.reply_to_msg_id:
         previous_message = await event.get_reply_message()
-        reply_msg_id = previous_message.id
         if previous_message.media:
-            downloaded_file_name = await event.client.download_media(
-                previous_message, progress_callback=progress)
+            downloaded_file_name = await event.client.download_media(previous_message)
             m_list = None
             with open(downloaded_file_name, "rb") as file:
                 m_list = file.readlines()
@@ -72,27 +56,14 @@ async def make_qr(event):
         else:
             message = previous_message.message
 
-    url = "https://api.qrserver.com/v1/create-qr-code/?data={}&\
-size=200x200&charset-source=UTF-8&charset-target=UTF-8\
-&ecc=L&color=0-0-0&bgcolor=255-255-255\
-&margin=1&qzone=0&format=jpg"
-
-    resp = get(url.format(message), stream=True)
+    resp = get(ENC_URL.format(message), stream=True)
     required_file_name = "temp_qr.webp"
     with open(required_file_name, "w+b") as file:
         for chunk in resp.iter_content(chunk_size=128):
             file.write(chunk)
-    await event.client.send_file(
-        event.chat_id,
-        required_file_name,
-        reply_to=reply_msg_id,
-        progress_callback=progress,
-    )
+
+    await event.reply(file=required_file_name)
     os.remove(required_file_name)
-    duration = (datetime.now() - start).seconds
-    await event.edit("Created QRCode in {} seconds".format(duration))
-    await sleep(5)
-    await event.delete()
 
 
 CMD_HELP.update({
