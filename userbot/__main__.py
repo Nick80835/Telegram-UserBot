@@ -5,17 +5,20 @@
 #
 """ Userbot start point """
 
-from importlib import import_module
+from importlib import import_module, reload
 from sys import argv
 
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
 
 from userbot import LOGS, bot
+from userbot.events import errors_handler, register
 from userbot.modules import ALL_MODULES
 
 INVALID_PH = '\nERROR: The Phone No. entered is INVALID' \
              '\n  Tip: Use Country Code along with No.' \
              '\n       Recheck your Phone Number'
+
+LOADED_MODULES = []
 
 try:
     bot.start()
@@ -24,7 +27,24 @@ except PhoneNumberInvalidError:
     exit(1)
 
 for module_name in ALL_MODULES:
-    imported_module = import_module("userbot.modules." + module_name)
+    LOADED_MODULES.append(import_module("userbot.modules." + module_name))
+
+
+@register(outgoing=True, pattern="reload")
+@errors_handler
+async def reloadmodules(event):
+    try:
+        for callback, _ in event.client.list_event_handlers():
+            if id(callback) != id(reloadmodules):
+                event.client.remove_event_handler(callback)
+
+        for module in LOADED_MODULES:
+            reload(module)
+
+        await event.edit("`Successfully reloaded all modules.`")
+    except Exception as exception:
+        await event.edit(f"`There was an error while reloading all modules.\n{exception}`")
+
 
 LOGS.info("Your Bot is alive! Test it by typing .alive on any chat."
           " Should you need assistance, head to https://t.me/userbot_support")
