@@ -287,7 +287,7 @@ async def spongemocktext(event): # Do it and find the real fun.
             if reply_text[-1] + reply_text[-2] == reply_text[-1].lower() + reply_text[-2].lower():
                 reply_text += letter.upper()
                 continue
-            
+
             if reply_text[-1] + reply_text[-2] == reply_text[-1].upper() + reply_text[-2].upper():
                 reply_text += letter.lower()
                 continue

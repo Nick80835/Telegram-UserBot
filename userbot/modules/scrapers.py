@@ -20,7 +20,7 @@ from search_engine_parser import GoogleSearch
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import errors_handler, register
 
 LANG = "en"
@@ -345,7 +345,7 @@ async def download_video(event):
         file.write(resp.content)
 
     await event.edit("**Uploading...**")
-    await bot.send_file(event.chat_id,
+    await event.client.send_file(event.chat_id,
                         f'{safe_filename(video.title)}.mp4',
                         caption=f"{video.title}",
                         thumb="thumbnail.jpg")

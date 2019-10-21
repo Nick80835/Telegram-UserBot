@@ -8,15 +8,15 @@ from time import sleep
 
 from telethon.tl.functions.channels import LeaveChannelRequest
 
-from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP, bot
+from userbot import BOTLOG, BOTLOG_CHATID, CMD_HELP
 from userbot.events import errors_handler, register
 
 
 @register(outgoing=True, pattern="userid")
 @errors_handler
-async def useridgetter(target):
+async def useridgetter(event):
     # For .userid command, returns the ID of the target user
-    message = await target.get_reply_message()
+    message = await event.get_reply_message()
     if message:
         if not message.forward:
             user_id = message.sender.id
@@ -30,49 +30,49 @@ async def useridgetter(target):
                 name = f"@{message.forward.sender.username}"
             else:
                 name = f"**{message.forward.sender.first_name}**"
-        await target.edit(f"**Name:** {name}\n**User ID:** `{user_id}`")
+        await event.edit(f"**Name:** {name}\n**User ID:** `{user_id}`")
     else:
-        await target.edit(f"`Reply to someone to get their user ID!`")
+        await event.edit(f"`Reply to someone to get their user ID!`")
 
 
 @register(outgoing=True, pattern="chatid")
 @errors_handler
-async def chatidgetter(chat):
+async def chatidgetter(event):
     # For .chatid, returns the ID of the chat you are in at that moment.
-    await chat.edit(f"**Chat ID:** `{chat.chat_id}`")
+    await event.edit(f"**Chat ID:** `{event.chat_id}`")
 
 
 @register(outgoing=True, pattern="log")
 @errors_handler
-async def log(log_text):
+async def log(event):
     # For .log command, forwards a message
     # or the command argument to the bot logs group
     if BOTLOG:
-        if log_text.reply_to_msg_id:
-            reply_msg = await log_text.get_reply_message()
+        if event.reply_to_msg_id:
+            reply_msg = await event.get_reply_message()
             await reply_msg.forward_to(BOTLOG_CHATID)
-        elif log_text.pattern_match.group(1):
-            user = f"#LOG / Chat ID: {log_text.chat_id}\n\n"
-            textx = user + log_text.pattern_match.group(1)
-            await bot.send_message(BOTLOG_CHATID, textx)
+        elif event.pattern_match.group(1):
+            user = f"#LOG / Chat ID: {event.chat_id}\n\n"
+            textx = user + event.pattern_match.group(1)
+            await event.client.send_message(BOTLOG_CHATID, textx)
         else:
-            await log_text.edit("`What am I supposed to log?`")
+            await event.edit("`What am I supposed to log?`")
             return
-        await log_text.edit("`Logged Successfully`")
+        await event.edit("`Logged Successfully`")
     else:
-        await log_text.edit("`This feature requires Logging to be enabled!`")
+        await event.edit("`This feature requires Logging to be enabled!`")
         return
 
     sleep(2)
-    await log_text.delete()
+    await event.delete()
 
 
 @register(outgoing=True, pattern="kickme")
 @errors_handler
-async def kickme(leave):
+async def kickme(event):
     # Basically it's .kickme command
-    await leave.edit("`Nope, no, no, I go away!`")
-    await bot(LeaveChannelRequest(leave.chat_id))
+    await event.edit("`Nope, no, no, I go away!`")
+    await event.client(LeaveChannelRequest(event.chat_id))
 
 
 CMD_HELP.update({
