@@ -13,7 +13,7 @@ from random import choice, getrandbits, randint
 
 from cowpy import cow
 
-from userbot import CMD_HELP, ZALG_LIST
+from userbot import CMD_HELP
 from userbot.events import errors_handler, register
 
 METOOSTR = [
@@ -74,6 +74,25 @@ RUNSREACTS = [
     "I go away",
     "I am just walking off, coz me is too fat.",
     "I Fugged off!",
+]
+
+ZALG_LIST = [
+    [
+        "̖"," ̗"," ̘"," ̙"," ̜"," ̝"," ̞"," ̟"," ̠"," ̤"," ̥"," ̦",
+        " ̩"," ̪"," ̫"," ̬"," ̭"," ̮"," ̯"," ̰"," ̱"," ̲"," ̳"," ̹",
+        " ̺"," ̻"," ̼"," ͅ"," ͇"," ͈"," ͉"," ͍"," ͎"," ͓"," ͔"," ͕",
+        " ͖"," ͙"," ͚"," ",
+    ],
+    [
+        " ̍"," ̎"," ̄"," ̅"," ̿"," ̑"," ̆"," ̐"," ͒"," ͗"," ͑"," ̇",
+        " ̈"," ̊"," ͂"," ̓"," ̈́"," ͊"," ͋"," ͌"," ̃"," ̂"," ̌"," ͐",
+        " ́"," ̋"," ̏"," ̽"," ̉"," ͣ"," ͤ"," ͥ"," ͦ"," ͧ"," ͨ"," ͩ",
+        " ͪ"," ͫ"," ͬ"," ͭ"," ͮ"," ͯ"," ̾"," ͛"," ͆"," ̚",
+    ],
+    [
+        " ̕"," ̛"," ̀"," ́"," ͘"," ̡"," ̢"," ̧"," ̨"," ̴"," ̵"," ̶",
+        " ͜"," ͝"," ͞"," ͟"," ͠"," ͢"," ̸"," ̷"," ͡",
+    ]
 ]
 
 
