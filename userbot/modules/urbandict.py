@@ -8,7 +8,7 @@
 import os
 import re
 
-import aiohttp
+import requests
 
 from userbot import CMD_HELP
 from userbot.events import errors_handler, register
@@ -22,11 +22,6 @@ UD_RANDOM_URL = 'http://api.urbandictionary.com/v0/random'
 async def urban_dict(event):
     udquery = event.pattern_match.group(1)
 
-    try:
-        udquery
-    except:
-        udquery = None
-
     if udquery:
         params = {'term': udquery}
         url = UD_QUERY_URL
@@ -34,15 +29,11 @@ async def urban_dict(event):
         params = None
         url = UD_RANDOM_URL
 
-    session = aiohttp.ClientSession()
-
-    async with session.get(url, params=params) as response:
-        if response.status == 200:
-            response = await response.json()
+    with requests.get(url, params=params) as response:
+        if response.status_code == 200:
+            response = response.json()
         else:
-            response = response.status
-
-    await session.close()
+            response = response.status_code
 
     try:
         response = response['list'][0]

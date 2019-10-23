@@ -8,7 +8,6 @@
 import os
 import re
 
-import aiohttp
 from emoji import get_emoji_regexp
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS

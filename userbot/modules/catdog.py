@@ -5,7 +5,7 @@
 #
 """ Userbot module containing dogs and cats. """
 
-import aiohttp
+import requests
 
 from userbot import CMD_HELP
 from userbot.events import errors_handler, register
@@ -21,27 +21,22 @@ GIFPARAM = {"mime_types": "gif"}
 
 
 async def neko_atsume(params):
-    session = aiohttp.ClientSession(headers=CAT_HEADERS)
-
-    async with session.get(CAT_URL, params=params) as response:
-        if response.status == 200:
-            neko = await response.json()
+    with requests.get(CAT_URL, params=params, headers=CAT_HEADERS) as response:
+        if response.status_code == 200:
+            neko = response.json()
         else:
-            neko = response.status
+            neko = response.status_code
 
-    await session.close()
     return neko
 
+
 async def inu_atsume(params):
-    session = aiohttp.ClientSession(headers=DOG_HEADERS)
-
-    async with session.get(DOG_URL, params=params) as response:
-        if response.status == 200:
-            inu = await response.json()
+    with requests.get(DOG_URL, params=params, headers=DOG_HEADERS) as response:
+        if response.status_code == 200:
+            inu = response.json()
         else:
-            inu = response.status
+            inu = response.status_code
 
-    await session.close()
     return inu
 
 
