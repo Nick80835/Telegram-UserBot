@@ -10,7 +10,6 @@ import re
 
 import aiohttp
 from emoji import get_emoji_regexp
-from google_images_download import google_images_download
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
 from pytube import YouTube
@@ -26,45 +25,6 @@ from userbot.events import errors_handler, register
 LANG = "en"
 UD_QUERY_URL = 'http://api.urbandictionary.com/v0/define'
 UD_RANDOM_URL = 'http://api.urbandictionary.com/v0/random'
-
-
-@register(outgoing=True, pattern="img")
-@errors_handler
-async def img_sampler(event):
-    # For .img command, search and return images matching the query
-    await event.edit("Processing…")
-    query = event.pattern_match.group(1)
-    lim = re.findall(r"lim=\d+", query)
-    try:
-        lim = lim[0]
-        lim = lim.replace("lim=", "")
-        query = query.replace("lim=" + lim[0], "")
-    except IndexError:
-        lim = 2
-    response = google_images_download.googleimagesdownload()
-
-    # creating list of arguments
-    arguments = {
-        "keywords": query,
-        "limit": lim,
-        "format": "jpg",
-        "no_directory": "no_directory"
-    }
-
-    # passing the arguments to the function
-    paths = response.download(arguments)
-    lst = paths[0][query]
-
-    try:
-        await event.client.send_file(await event.client.get_input_entity(event.chat_id), lst)
-    except TypeError:
-        await event.edit(f"`The images failed to download! Oopsie!`")
-        return
-
-    os.remove(lst[0])
-    os.remove(lst[1])
-    os.rmdir(os.path.dirname(os.path.abspath(lst[0])))
-    await event.delete()
 
 
 @register(outgoing=True, pattern="google")
@@ -360,11 +320,6 @@ def de_emojify(input_string):
     return get_emoji_regexp().sub(u'', input_string)
 
 
-CMD_HELP.update({
-    'img':
-    ".img <search_query>"
-    "\nUsage: Does an image search on Google and shows two images."
-})
 CMD_HELP.update({
     'google':
     ".google <search_query>"
