@@ -82,7 +82,7 @@ async def img_sampler(event):
         image_streams.append(image_io)
 
     try:
-        await event.client.send_file(await event.client.get_input_entity(event.chat_id), image_streams)
+        await event.client.send_file(event.chat_id, image_streams)
     except TypeError:
         await event.edit("`The images failed to download! Oopsie!`")
         return
