@@ -5,8 +5,7 @@
 #
 """ Userbot module for scraping Urban Dictionary. """
 
-import os
-import re
+import io
 
 import requests
 
@@ -33,36 +32,27 @@ async def urban_dict(event):
         if response.status_code == 200:
             response = response.json()
         else:
-            response = response.status_code
+            await event.edit(f"`An error occurred, response code:` **{response.status_code}**")
+            return
 
-    try:
-        response = response['list'][0]
-        wordinfo = [response['word'], response['definition']]
-        if response['example'] != '':
-            wordinfo.append(response['example'])
-    except NameError:
-        wordinfo = ["An error occurred, response code:", str(response)]
-    except IndexError:
-        wordinfo = ['No results for query', udquery]
+    if response['list']:
+        response_word = response['list'][0]
+    else:
+        await event.edit(f"`No results for query:` **{udquery}**")
+        return
 
-    definition = '**{0[0]}**: {0[1]}'.format(wordinfo)
+    definition = f"**{response_word['word']}**: `{response_word['definition']}`"
 
-    try:
-        definition += '\n\n**Example**: {0[2]}'.format(wordinfo)
-    except IndexError:
-        pass
+    if response_word['example']:
+        definition += f"\n\n**Example**: `{response_word['example']}`"
 
-    definition = re.sub(r'[[]', '', definition)
-    definition = re.sub(r'[]]', '', definition)
+    definition = definition.replace("[", "").replace("]", "")
 
     if len(definition) >= 4096:
-        await event.edit("`Output too large, sending as file.`")
-        file = open("output.txt", "w+")
-        file.write(definition)
-        file.close()
-        await event.client.send_file(event.chat_id, "output.txt", caption="`Output was too large, sent it as a file.`")
-        if os.path.exists("output.txt"):
-            os.remove("output.txt")
+        file_io = io.BytesIO()
+        file_io.write(bytes(definition.encode('utf-8')))
+        file_io.name = f"definition of {response_word['word']}.txt"
+        await event.client.send_file(event.chat_id, file_io, caption="`Output was too large, sent it as a file.`")
         await event.delete()
         return
 
