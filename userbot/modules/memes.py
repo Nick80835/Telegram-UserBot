@@ -343,7 +343,7 @@ async def bluetext(event): # Believe me, you will find this useful.
     await event.edit("/BLUETEXT /MUST /CLICK\n/IM /A /STOOPID /ANIMAL /THATS /ATTRACTED /TO /COLORZ!")
 
 
-@register(pattern='type')
+@register(outgoing=True, pattern='type')
 @errors_handler
 async def typewriter(event): # Just a small command to make your keyboard become a typewriter!
     textx = await event.get_reply_message()
