@@ -76,6 +76,7 @@ async def deepfryer(event):
     image.save(fried_io, "JPEG")
     fried_io.seek(0)
 
+    await event.edit("`Deep frying complete.`")
     await event.reply(file=fried_io)
 
 
