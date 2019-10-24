@@ -17,6 +17,8 @@ async def sticklet(event):
         await event.edit("`I need text to sticklet!`")
         return
 
+    await event.delete()
+
     sticktext = textwrap.wrap(sticktext, width=10)
     sticktext = '\n'.join(sticktext)
 
