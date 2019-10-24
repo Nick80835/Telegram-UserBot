@@ -41,7 +41,7 @@ async def reloadmodules(event):
         for module in LOADED_MODULES:
             reload(module)
 
-        await event.edit("`Successfully reloaded all modules.`")
+        await event.delete()
     except Exception as exception:
         await event.edit(f"`There was an error while reloading all modules.\n{exception}`")
 
