@@ -33,17 +33,22 @@ for module_name in ALL_MODULES:
 @register(outgoing=True, pattern="reload")
 @errors_handler
 async def reloadmodules(event):
-    try:
-        for callback, _ in event.client.list_event_handlers():
-            if id(callback) != id(reloadmodules):
-                event.client.remove_event_handler(callback)
+    for callback, _ in event.client.list_event_handlers():
+        if id(callback) != id(reloadmodules):
+            event.client.remove_event_handler(callback)
 
-        for module in LOADED_MODULES:
+    errors = ""
+
+    for module in LOADED_MODULES:
+        try:
             reload(module)
+        except Exception as exception:
+            errors += f"`Error while reloading {module.__name__} -> {exception}\n\n`"
 
+    if errors:
+        await event.edit(errors)
+    else:
         await event.delete()
-    except Exception as exception:
-        await event.edit(f"`There was an error while reloading all modules.\n{exception}`")
 
 
 LOGS.info("Your Bot is alive! Test it by typing .alive on any chat."
