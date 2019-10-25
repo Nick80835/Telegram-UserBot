@@ -5,8 +5,6 @@
 #
 """ Userbot module for scraping anime stuff. """
 
-import io
-
 import requests
 
 from userbot import CMD_HELP
@@ -42,11 +40,25 @@ async def danbooru(event):
         await event.edit(f"`No results for query:` **{search_query}**")
         return
 
-    image_io = io.BytesIO(requests.get(response[0]['file_url'], stream=True).content)
-    image_io.name = None
-    image_io.seek(0)
+    valid_urls = []
 
-    await event.client.send_file(event.chat_id, image_io)
+    for url in ['file_url', 'large_file_url', 'source']:
+        if url in response[0].keys():
+            valid_urls.append(response[0][url])
+
+    if not valid_urls:
+        await event.edit(f"`Failed to find URLs for query:` **{search_query}**")
+        return
+
+    for image_url in valid_urls:
+        try:
+            await event.client.send_file(event.chat_id, file=image_url)
+            await event.delete()
+            return
+        except:
+            pass
+
+    await event.edit(f"``Failed to fetch media for query:` **{search_query}**")
 
 
 CMD_HELP.update({
