@@ -12,6 +12,8 @@ from userbot.events import errors_handler, register
 
 CAT_URL = 'http://api.thecatapi.com/v1/images/search'
 DOG_URL = 'http://api.thedogapi.com/v1/images/search'
+SHIBE_URL = 'http://shibe.online/api/shibes'
+BIRD_URL = 'http://shibe.online/api/birds'
 CAT_API_KEY = 'e5a56813-be40-481c-9c8a-a6585c37c1fe'
 DOG_API_KEY = '105555df-5c50-40fe-bd59-d15a17ce1c2e'
 CAT_HEADERS = {"x-api-key": CAT_API_KEY}
@@ -38,6 +40,52 @@ async def inu_atsume(params):
             inu = response.status_code
 
     return inu
+
+
+async def shibe_inu_atsume():
+    with requests.get(SHIBE_URL, params=None, headers=None) as response:
+        if response.status_code == 200:
+            shibe_inu = response.json()
+        else:
+            shibe_inu = response.status_code
+
+    return shibe_inu
+
+
+async def tori_atsume():
+    with requests.get(BIRD_URL, params=None, headers=None) as response:
+        if response.status_code == 200:
+            tori = response.json()
+        else:
+            tori = response.status_code
+
+    return tori
+
+
+@register(outgoing=True, pattern="shibe")
+@errors_handler
+async def shibe(event):
+    shibe_inu = await shibe_inu_atsume()
+
+    if isinstance(shibe_inu, int):
+        await event.edit(f"`There was an error finding the shibes! :( -> {shibe_inu}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), shibe_inu[0])
+    await event.delete()
+
+
+@register(outgoing=True, pattern="bird")
+@errors_handler
+async def bird(event):
+    tori = await tori_atsume()
+
+    if isinstance(tori, int):
+        await event.edit(f"`There was an error finding the birdies! :( -> {tori}`")
+        return
+
+    await event.client.send_file(await event.client.get_input_entity(event.chat_id), tori[0])
+    await event.delete()
 
 
 @register(outgoing=True, pattern="cat")
