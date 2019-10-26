@@ -1,8 +1,17 @@
-# Copyright (C) 2019 The Raphielscape Company LLC.
+# Copyright (C) 2019 Nick Filmer (nick80835@gmail.com)
 #
-# Licensed under the Raphielscape Public License, Version 1.c (the "License");
-# you may not use this file except in compliance with the License.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
 #
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Original source for the deepfrying code (used under the following license): https://github.com/Ovyerus/deeppyer
 
@@ -27,7 +36,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-""" Userbot module for frying stuff. """
 
 import io
 from random import randint, uniform
@@ -49,6 +57,8 @@ async def deepfryer(event):
     except ValueError:
         frycount = 1
 
+    replied_fry = True
+
     if event.is_reply:
         reply_message = await event.get_reply_message()
         data = await check_media(reply_message)
@@ -57,17 +67,23 @@ async def deepfryer(event):
             await event.edit("`I can't deep fry that!`")
             return
     else:
-        await event.edit("`Reply to an image or sticker to deep fry it!`")
-        return
+        data = await check_media(event)
+        replied_fry = False
 
-    # download last photo (highres) as byte array
+        if isinstance(data, bool):
+            await event.edit("`Reply to an image or sticker or caption an image to deep fry it!`")
+            return
+
+    # Download photo (highres) as byte array
     await event.edit("`Downloading media…`")
     image = io.BytesIO()
     await event.client.download_media(data, image)
     image = Image.open(image)
 
-    # fry the image
+    # Fry the image
     await event.edit("`Deep frying media…`")
+    image = image.convert("RGB")
+
     for _ in range(frycount):
         image = await deepfry(image)
 
@@ -76,8 +92,11 @@ async def deepfryer(event):
     image.save(fried_io, "JPEG")
     fried_io.seek(0)
 
-    await event.edit("`Deep frying complete.`")
-    await event.reply(file=fried_io)
+    if replied_fry:
+        await event.edit("`Deep frying complete.`")
+        await event.reply(file=fried_io)
+    else:
+        await event.edit("`Deep frying complete.`", file=fried_io)
 
 
 async def deepfry(img: Image) -> Image:
@@ -86,10 +105,7 @@ async def deepfry(img: Image) -> Image:
         (randint(190, 255), randint(170, 240), randint(180, 250))
     )
 
-    img = img.copy().convert("RGB")
-
     # Crush image to hell and back
-    img = img.convert("RGB")
     width, height = img.width, img.height
     img = img.resize((int(width ** uniform(0.8, 0.9)), int(height ** uniform(0.8, 0.9))), resample=Image.LANCZOS)
     img = img.resize((int(width ** uniform(0.85, 0.95)), int(height ** uniform(0.85, 0.95))), resample=Image.BILINEAR)
@@ -104,7 +120,7 @@ async def deepfry(img: Image) -> Image:
 
     overlay = ImageOps.colorize(overlay, colours[0], colours[1])
 
-    # Overlay red and yellow onto main image and sharpen the hell out of it
+    # Blend random colors onto and sharpen the image
     img = Image.blend(img, overlay, uniform(0.1, 0.4))
     img = ImageEnhance.Sharpness(img).enhance(randint(5, 300))
 
