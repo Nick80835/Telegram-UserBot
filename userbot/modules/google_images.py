@@ -78,7 +78,7 @@ async def img_sampler(event):
 
     for i in image_urls:
         image_io = io.BytesIO(requests.get(i, stream=True).content)
-        image_io.name = "image.jpg"
+        image_io.name = None
         image_streams.append(image_io)
 
     try:
