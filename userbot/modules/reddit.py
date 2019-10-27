@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from random import choice
+
 import praw
 
 from userbot import CMD_HELP
@@ -23,90 +25,113 @@ REDDIT = praw.Reddit(client_id='-fmzwojFG6JkGg',
                      user_agent='TG_Userbot')
 
 
-@register(outgoing=True, pattern="suffer")
-@errors_handler
-async def makemesuffer(event):
+async def imagefetcherfallback(sub):
+    hot = REDDIT.subreddit(sub).hot()
+    hot_list = list(hot.__iter__())
+
     for _ in range(10):
-        post = REDDIT.subreddit('makemesuffer').random()
+        post = choice(hot_list)
+
+        if post.url:
+            return post.url, post.title
+
+    return None, None
+
+
+async def titlefetcherfallback(sub):
+    hot = REDDIT.subreddit(sub).hot()
+    hot_list = list(hot.__iter__())
+
+    return choice(hot_list).title
+
+
+async def imagefetcher(event, sub):
+    await event.edit(f"`Fetching from` **r/{sub}**`…`")
+
+    for _ in range(10):
+        post = REDDIT.subreddit(sub).random()
+
+        if not post:
+            image_url, title = await imagefetcherfallback(sub)
+            break
 
         if post.url:
             image_url = post.url
+            title = post.title
             break
 
     if not image_url:
-        await event.edit("`Failed to find any valid content!`")
+        await event.edit(f"`Failed to find any valid content on` **r/{sub}**`!`")
         return
 
     try:
-        await event.client.send_file(event.chat_id, image_url)
-        await event.delete()
+        await event.reply(title, file=image_url)
     except:
-        await event.edit("`Failed to download content!`")
+        await event.edit(f"`Failed to download content from` **r/{sub}**`!`")
+
+
+async def titlefetcher(event, sub):
+    await event.edit(f"`Fetching from` **r/{sub}**`…`")
+
+    post = REDDIT.subreddit(sub).random()
+
+    if not post:
+        title = await titlefetcherfallback(sub)
+    else:
+        title = post.title
+
+    await event.reply(title)
+
+
+@register(outgoing=True, pattern="redi")
+@errors_handler
+async def redimg(event):
+    sub = event.pattern_match.group(1)
+
+    if sub:
+        await imagefetcher(event, sub)
+    else:
+        event.edit("Syntax: .redi <subreddit name>")
+
+
+@register(outgoing=True, pattern="redt")
+@errors_handler
+async def redtit(event):
+    sub = event.pattern_match.group(1)
+
+    if sub:
+        await titlefetcher(event, sub)
+    else:
+        event.edit("Syntax: .redt <subreddit name>")
+
+
+@register(outgoing=True, pattern="suffer")
+@errors_handler
+async def makemesuffer(event):
+    await imagefetcher(event, "MakeMeSuffer")
 
 
 @register(outgoing=True, pattern="snafu")
 @errors_handler
 async def coaxedintoasnafu(event):
-    for _ in range(10):
-        post = REDDIT.subreddit('coaxedintoasnafu').random()
-
-        if post.url:
-            image_url = post.url
-            break
-
-    if not image_url:
-        await event.edit("`Failed to find any valid content!`")
-        return
-
-    try:
-        await event.client.send_file(event.chat_id, image_url)
-        await event.delete()
-    except:
-        await event.edit("`Failed to download content!`")
+    await imagefetcher(event, "CoaxedIntoASnafu")
 
 
 @register(outgoing=True, pattern="aita")
 @errors_handler
 async def amitheasshole(event):
-    for _ in range(10):
-        post = REDDIT.subreddit('amitheasshole').random()
-
-        if post.title:
-            title_text = post.title
-            break
-
-    if not title_text:
-        await event.edit("`Failed to find any valid content!`")
-        return
-
-    await event.reply(title_text)
-    await event.delete()
+    await titlefetcher(event, "AmITheAsshole")
 
 
 @register(outgoing=True, pattern="jon(x|)")
 @errors_handler
 async def imsorryjon(event):
     if "x" in event.pattern_match.group(0):
-        sub = "imreallysorryjon"
+        sub = "ImReallySorryJon"
     else:
-        sub = "imsorryjon"
+        sub = "ImSorryJon"
 
-    for _ in range(10):
-        post = REDDIT.subreddit(sub).random()
-
-        if post.url:
-            image_url = post.url
-            break
-
-    if not image_url:
-        await event.edit("`Failed to find any valid content!`")
-        return
-
-    try:
-        await event.client.send_file(event.chat_id, image_url)
-        await event.delete()
-    except:
-        await event.edit("`Failed to download content!`")
+    await imagefetcher(event, sub)
 
 
 CMD_HELP.update({
@@ -128,4 +153,14 @@ CMD_HELP.update({
     'jon':
     ".jon(x)"
     "\nUsage: I'm (really) sorry Jon."
+})
+CMD_HELP.update({
+    'redi':
+    ".redi <subreddit name>"
+    "\nUsage: Get random image content from any subreddit."
+})
+CMD_HELP.update({
+    'redt':
+    ".redt <subreddit name>"
+    "\nUsage: Get random title content from any subreddit."
 })
