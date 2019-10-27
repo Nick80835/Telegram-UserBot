@@ -24,6 +24,8 @@ REDDIT = praw.Reddit(client_id='-fmzwojFG6JkGg',
                      client_secret=None,
                      user_agent='TG_Userbot')
 
+VALID_ENDS = (".mp4", ".jpg", ".jpeg", ".png", ".gif")
+
 
 async def imagefetcherfallback(sub):
     hot = REDDIT.subreddit(sub).hot()
@@ -33,7 +35,8 @@ async def imagefetcherfallback(sub):
         post = choice(hot_list)
 
         if post.url:
-            return post.url, post.title
+            if post.url.endswith(VALID_ENDS):
+                return post.url, post.title
 
     return None, None
 
@@ -46,7 +49,7 @@ async def titlefetcherfallback(sub):
 
 
 async def imagefetcher(event, sub):
-    await event.edit(f"`Fetching from` **r/{sub}**`…`")
+    await event.edit(f"`Fetching from `**r/{sub}**`…`")
 
     for _ in range(10):
         post = REDDIT.subreddit(sub).random()
@@ -56,22 +59,23 @@ async def imagefetcher(event, sub):
             break
 
         if post.url:
-            image_url = post.url
-            title = post.title
-            break
+            if post.url.endswith(VALID_ENDS):
+                image_url = post.url
+                title = post.title
+                break
 
     if not image_url:
-        await event.edit(f"`Failed to find any valid content on` **r/{sub}**`!`")
+        await event.edit(f"`Failed to find any valid content on `**r/{sub}**`!`")
         return
 
     try:
         await event.reply(title, file=image_url)
     except:
-        await event.edit(f"`Failed to download content from` **r/{sub}**`!`")
+        await event.edit(f"`Failed to download content from `**r/{sub}**`!`")
 
 
 async def titlefetcher(event, sub):
-    await event.edit(f"`Fetching from` **r/{sub}**`…`")
+    await event.edit(f"`Fetching from `**r/{sub}**`…`")
 
     post = REDDIT.subreddit(sub).random()
 
