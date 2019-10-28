@@ -15,6 +15,7 @@ import pylast
 from dotenv import load_dotenv
 from requests import get
 from telethon import TelegramClient
+from telethon.network.connection.tcpabridged import ConnectionTcpAbridged
 
 getstr = lambda varname, default: os.environ.get(varname, default)
 getbool = lambda varname, default: sb(os.environ.get(varname, default))
@@ -58,7 +59,7 @@ PM_AUTO_BAN = getbool("PM_AUTO_BAN", "False")
 WELCOME_MUTE = getbool("WELCOME_MUTE", "False")
 
 # pylint: disable=invalid-name
-bot = TelegramClient(SESSION_NAME, API_KEY, API_HASH)
+bot = TelegramClient(SESSION_NAME, API_KEY, API_HASH, connection=ConnectionTcpAbridged)
 
 # Global Variables
 COUNT_MSG = 0
