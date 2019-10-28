@@ -25,8 +25,4 @@ humanize
 pyDownload
 psutil
 pylast
-numba
-numpy
-opencv-python
-scipy
 praw
