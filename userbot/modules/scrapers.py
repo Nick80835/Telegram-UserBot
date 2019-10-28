@@ -11,10 +11,6 @@ import re
 from emoji import get_emoji_regexp
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
-from pytube import YouTube
-from pytube.helpers import safe_filename
-from requests import get
-from search_engine_parser import GoogleSearch
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 
@@ -28,6 +24,8 @@ LANG = "en"
 @errors_handler
 async def gsearch(event):
     # For .google command, do a Google search
+    from search_engine_parser import GoogleSearch
+
     match = event.pattern_match.group(1)
     page = re.findall(r"page=\d+", match)
     try:
@@ -186,71 +184,6 @@ async def lang(event):
             BOTLOG_CHATID, f"`Default language changed to` **{LANG}**")
 
 
-@register(outgoing=True, pattern="yt_dl")
-@errors_handler
-async def download_video(event):
-    # For .yt_dl command, download videos from YouTube
-    url = event.pattern_match.group(1)
-    quality = event.pattern_match.group(2)
-
-    await event.edit("`Fetching…`")
-
-    video = YouTube(url)
-
-    if quality:
-        video_stream = video.streams.filter(progressive=True,
-                                            subtype="mp4",
-                                            res=quality).first()
-    else:
-        video_stream = video.streams.filter(progressive=True,
-                                            subtype="mp4").first()
-
-    if video_stream is None:
-        all_streams = video.streams.filter(progressive=True, subtype="mp4").all()
-        available_qualities = ""
-
-        for item in all_streams[:-1]:
-            available_qualities += f"{item.resolution}, "
-        available_qualities += all_streams[-1].resolution
-
-        await event.edit("**A stream matching your query wasn't found. "
-                         "Try again with different options.\n**"
-                         "**Available Qualities:**\n"
-                         f"{available_qualities}")
-        return
-
-    video_size = video_stream.filesize / 1000000
-
-    if video_size >= 50:
-        await event.edit(
-            ("**File larger than 50MB. Sending the link instead.\n**"
-             f"Get the video [here]({video_stream.url})\n\n"
-             "**If the video plays instead of downloading, "
-             "right click(or long press on touchscreen) and "
-             "press 'Save Video As…'(may depend on the browser) "
-             "to download the video.**"))
-        return
-
-    await event.edit("**Downloading...**")
-
-    video_stream.download(filename=video.title)
-
-    url = f"https://img.youtube.com/vi/{video.video_id}/maxresdefault.jpg"
-    resp = get(url)
-    with open('thumbnail.jpg', 'wb') as file:
-        file.write(resp.content)
-
-    await event.edit("**Uploading...**")
-    await event.client.send_file(event.chat_id,
-                        f'{safe_filename(video.title)}.mp4',
-                        caption=f"{video.title}",
-                        thumb="thumbnail.jpg")
-
-    os.remove(f"{safe_filename(video.title)}.mp4")
-    os.remove('thumbnail.jpg')
-    await event.delete()
-
-
 def de_emojify(input_string):
     # Remove emojis and other non-safe characters from string
     return get_emoji_regexp().sub(u'', input_string)
@@ -282,11 +215,4 @@ CMD_HELP.update({
     "\nUsage: Changes the default language of"
     "userbot scrapers used for Google TRT, "
     "TTS may not work."
-})
-CMD_HELP.update({
-    'yt_dl':
-    ".yt_dl <url> <quality>(optional)"
-    "\nUsage: Download videos from YouTube. "
-    "If no quality is specified, the highest downloadable quality is "
-    "downloaded. Will send the link if the video is larger than 50 MB."
 })
