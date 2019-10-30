@@ -103,16 +103,7 @@ async def upstream(event):
         return
 
     await event.edit('`Successfully updated to latest bot revision!\n'
-                     'The bot will pass go, will collect $200, and will automagically restart…`')
-
-    try:
-        await event.client.disconnect()
-    except:
-        pass # we dont care
-    # Spin a new instance of bot
-    execl(sys.executable, sys.executable, *sys.argv)
-    # Shut the existing one down
-    exit()
+                     'You may use the reload command to reload all modules…`')
 
 
 CMD_HELP.update({
