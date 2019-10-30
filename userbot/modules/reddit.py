@@ -139,6 +139,12 @@ async def imsorryjon(event):
     await imagefetcher(event, sub)
 
 
+@register(outgoing=True, pattern="tihi")
+@errors_handler
+async def thanksihateit(event):
+    await imagefetcher(event, "TIHI")
+
+
 CMD_HELP.update({
     'suffer':
     ".suffer"
@@ -168,4 +174,9 @@ CMD_HELP.update({
     'redt':
     ".redt <subreddit name>"
     "\nUsage: Get random title content from any subreddit."
+})
+CMD_HELP.update({
+    'tihi':
+    ".tihi"
+    "\nUsage: Thanks, I hate it."
 })
