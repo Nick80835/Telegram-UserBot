@@ -50,6 +50,7 @@ async def titlefetcherfallback(sub):
 
 async def imagefetcher(event, sub):
     await event.edit(f"`Fetching from `**r/{sub}**`…`")
+    image_url = False
 
     for _ in range(10):
         post = REDDIT.subreddit(sub).random()
