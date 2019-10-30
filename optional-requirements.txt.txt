@@ -2,3 +2,4 @@ numba
 numpy
 opencv-python
 scipy
+search-engine-parser

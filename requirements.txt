@@ -18,7 +18,6 @@ speedtest-cli>=2.0.2
 telegraph
 telethon>=1.10.5
 wikipedia>=1.4.0
-search-engine-parser
 dnspython
 lxml
 humanize
