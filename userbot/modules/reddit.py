@@ -13,9 +13,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import io
+import mimetypes
 from random import choice
 
 import praw
+from aiohttp import ClientSession
+from prawcore.exceptions import NotFound
 
 from userbot import CMD_HELP
 from userbot.events import errors_handler, register
@@ -34,18 +38,26 @@ async def imagefetcherfallback(sub):
     for _ in range(10):
         post = choice(hot_list)
 
-        if post.url:
-            if post.url.endswith(VALID_ENDS):
-                return post.url, post.title
+        try:
+            if post.url:
+                if post.url.endswith(VALID_ENDS):
+                    return post.url, post.title, None
+        except NotFound:
+            return None, None, True
 
-    return None, None
+    return None, None, None
 
 
 async def titlefetcherfallback(sub):
     hot = REDDIT.subreddit(sub).hot()
     hot_list = list(hot.__iter__())
 
-    return choice(hot_list).title
+    try:
+        post_title = choice(hot_list).title
+    except NotFound:
+        return None, True
+
+    return post_title, None
 
 
 async def imagefetcher(event, sub):
@@ -53,25 +65,49 @@ async def imagefetcher(event, sub):
     image_url = False
 
     for _ in range(10):
-        post = REDDIT.subreddit(sub).random()
+        try:
+            post = REDDIT.subreddit(sub).random()
+        except NotFound:
+            await event.edit(f"**r/{sub}**` doesn't seem to exist!`")
+            return
 
         if not post:
-            image_url, title = await imagefetcherfallback(sub)
+            image_url, title, error = await imagefetcherfallback(sub)
+            if error:
+                await event.edit(f"**r/{sub}**` doesn't seem to exist!`")
+                return
             break
 
-        if post.url:
-            if post.url.endswith(VALID_ENDS):
-                image_url = post.url
-                title = post.title
-                break
+        try:
+            if post.url:
+                if post.url.endswith(VALID_ENDS):
+                    image_url = post.url
+                    title = post.title
+                    break
+        except NotFound:
+            await event.edit(f"**r/{sub}**` doesn't seem to exist!`")
+            return
 
     if not image_url:
         await event.edit(f"`Failed to find any valid content on `**r/{sub}**`!`")
         return
 
     try:
-        await event.reply(title, file=image_url)
+        image_io = io.BytesIO()
+        session = ClientSession()
+
+        async with session.get(image_url) as response:
+            if response.status == 200:
+                image_io.write(await response.read())
+                image_io.name = f"reddit_content{mimetypes.guess_extension(response.headers['content-type'])}"
+                image_io.seek(0)
+            else:
+                raise Exception
+
+        await session.close()
+        await event.reply(title, file=image_io)
     except:
+        await session.close()
         await event.edit(f"`Failed to download content from `**r/{sub}**`!`")
 
 
@@ -81,9 +117,16 @@ async def titlefetcher(event, sub):
     post = REDDIT.subreddit(sub).random()
 
     if not post:
-        title = await titlefetcherfallback(sub)
+        title, error = await titlefetcherfallback(sub)
+        if error:
+            await event.edit(f"**r/{sub}**` doesn't seem to exist!`")
+            return
     else:
-        title = post.title
+        try:
+            title = post.title
+        except NotFound:
+            await event.edit(f"**r/{sub}**` doesn't seem to exist!`")
+            return
 
     await event.reply(title)
 

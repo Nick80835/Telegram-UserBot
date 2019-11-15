@@ -25,3 +25,4 @@ pyDownload
 psutil
 pylast
 praw
+aiohttp
