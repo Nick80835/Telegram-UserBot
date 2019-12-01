@@ -35,8 +35,8 @@ async def fastpurger(event):
     done = await event.client.send_message(
         event.chat_id,
         "`Fast purge complete!\n`Purged " + str(count) +
-        " messages. **This auto-generated message " +
-        "  shall be self destructed in 2 seconds.**",
+        " messages. **This auto-generated message" +
+        " shall be self destructed in 2 seconds.**",
     )
 
     if BOTLOG:
@@ -65,7 +65,7 @@ async def purgeme(event):
     smsg = await event.client.send_message(
         event.chat_id,
         "`Purge complete!` Purged " + str(count) +
-        " messages. **This auto-generated message " +
+        " messages. **This auto-generated message" +
         " shall be self destructed in 2 seconds.**",
     )
     if BOTLOG:
