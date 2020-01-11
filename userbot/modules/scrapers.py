@@ -5,6 +5,7 @@
 #
 """ Userbot module containing various scrapers. """
 
+import io
 import os
 import re
 
@@ -97,17 +98,22 @@ async def text_to_speech(event):
     # For .tts command, a wrapper for Google Text-to-Speech
     textx = await event.get_reply_message()
     message = event.pattern_match.group(1)
+
     if message:
         pass
     elif textx:
         message = textx.text
     else:
-        await event.edit("`Give a text or reply to a "
-                         "message for Text-to-Speech!`")
+        await event.edit("`Give a text or reply to a message for Text-to-Speech!`")
         return
 
+    tts_bytesio = io.BytesIO()
+    tts_bytesio.name = "tts.mp3"
+
     try:
-        gTTS(message, lang=LANG)
+        tts = gTTS(message, lang=LANG)
+        tts.write_to_fp(tts_bytesio)
+        tts_bytesio.seek(0)
     except AssertionError:
         await event.edit('The text is empty.\n'
                          'Nothing left to speak after pre-precessing, '
@@ -119,22 +125,9 @@ async def text_to_speech(event):
     except RuntimeError:
         await event.edit('Error loading the languages dictionary.')
         return
-    tts = gTTS(message, lang=LANG)
-    tts.save("k.mp3")
-    with open("k.mp3", "rb") as audio:
-        linelist = list(audio)
-        linecount = len(linelist)
-    if linecount == 1:
-        tts = gTTS(message, LANG)
-        tts.save("k.mp3")
-    with open("k.mp3", "r"):
-        await event.client.send_file(event.chat_id, "k.mp3", voice_note=True)
-        os.remove("k.mp3")
-        if BOTLOG:
-            await event.client.send_message(
-                BOTLOG_CHATID,
-                "tts of " + message + " executed successfully!")
-        await event.delete()
+
+    await event.client.send_file(event.chat_id, tts_bytesio, voice_note=True)
+    await event.delete()
 
 
 @register(outgoing=True, pattern="trt")
