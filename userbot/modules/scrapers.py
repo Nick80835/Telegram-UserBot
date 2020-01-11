@@ -107,7 +107,7 @@ async def text_to_speech(event):
         return
 
     try:
-        gTTS(message, LANG)
+        gTTS(message, lang=LANG)
     except AssertionError:
         await event.edit('The text is empty.\n'
                          'Nothing left to speak after pre-precessing, '
@@ -119,7 +119,7 @@ async def text_to_speech(event):
     except RuntimeError:
         await event.edit('Error loading the languages dictionary.')
         return
-    tts = gTTS(message, LANG)
+    tts = gTTS(message, lang=LANG)
     tts.save("k.mp3")
     with open("k.mp3", "rb") as audio:
         linelist = list(audio)
