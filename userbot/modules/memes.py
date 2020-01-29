@@ -233,12 +233,6 @@ async def zal(event): # Invoke the feeling of chaos.
     await event.edit("".join(reply_text))
 
 
-@register(outgoing=True, pattern="^hi$", custom_regex=True)
-@errors_handler
-async def hoi(event): # Greet everyone!
-    await event.edit("Hoi!😄")
-
-
 @register(outgoing=True, pattern="owo")
 @errors_handler
 async def faces(event): # UwU
